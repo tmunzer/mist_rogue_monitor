@@ -82,7 +82,10 @@ router.get("/stats", (req, res) => {
                                         })
                                         rogue_types.forEach(rogue_type => {
                                             if (rogue.rogue_type[rogue_type]) {
-                                                datasets[rogue_type][datasets[rogue_type].length - 1] = datasets[rogue_type][datasets[rogue_type].length - 1] + 1;
+                                                // test to remove the rogues from the "others" category
+                                                if (rogue_type != "others" || (!rogue.rogue_type["lan"] && !rogue.rogue_type["honeypot"] && !rogue.rogue_type["spoot"])) {
+                                                    datasets[rogue_type][datasets[rogue_type].length - 1] = datasets[rogue_type][datasets[rogue_type].length - 1] + 1;
+                                                }
                                             }
                                         })
                                     }
@@ -90,10 +93,13 @@ router.get("/stats", (req, res) => {
                                     // for all the APs (even the APs not seen during the last check) add the AP in the last days counters
                                     rogue_types.forEach(rogue_type => {
                                         if (rogue.rogue_type[rogue_type]) {
-                                            for (var i = 0; i <= 30; i++) {
-                                                var d = data.labels[i]
-                                                if (rogue.first_seen < d && rogue.last_seen > d) {
-                                                    datasets[rogue_type][i] = datasets[rogue_type][i] + 1;
+                                            // test to remove the rogues from the "others" category
+                                            if (rogue_type != "others" || (!rogue.rogue_type["lan"] && !rogue.rogue_type["honeypot"] && !rogue.rogue_type["spoot"])) {
+                                                for (var i = 0; i <= 30; i++) {
+                                                    var d = data.labels[i]
+                                                    if (rogue.first_seen < d && rogue.last_seen > d) {
+                                                        datasets[rogue_type][i] = datasets[rogue_type][i] + 1;
+                                                    }
                                                 }
                                             }
                                         }
