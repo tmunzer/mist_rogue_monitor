@@ -1,0 +1,32 @@
+mat-card {
+    margin: 2em;
+    width: 50em;
+}
+
+th {
+    text-align: start;
+}
+
+td {
+    padding: 0 1em;
+}
+
+.red {
+    color: #f44336;
+}
+
+.green {
+    color: green;
+}
+
+.text {
+    margin: auto 1em;
+}
+
+.selection-list {
+    width: 50%;
+    border: 1px solid lightgray;
+    height: 20em;
+    overflow: auto;
+    padding-top: 0;
+}

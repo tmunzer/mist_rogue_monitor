@@ -1,0 +1,99 @@
+/* NAV */
+
+.nav {
+    margin: 0 1em;
+    flex-direction: column;
+    display: flex;
+    width: 15em;
+}
+
+.rogue-header {
+    justify-content: space-around;
+    width: 90%;
+}
+
+.rogue-card {
+    align-items: stretch;
+    margin: 1em 0;
+    padding: 1em;
+    width: 15em;
+    border: 1px solid #d1d1d1;
+    cursor: pointer;
+}
+
+.dashboard-content {
+    margin: 1em;
+    border-radius: 0.2em;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+.current-count {
+    font-size: xx-large;
+    margin: 15px;
+    height: 24px;
+}
+
+.chart,
+.visible {
+    background-color: white;
+}
+
+.not-visible {
+    background-color: lightgray !important;
+    color: gray !important;
+}
+
+.visible .rogues {
+    color: firebrick;
+}
+
+.visible .no-rogues {
+    color: #85b332;
+}
+
+.compare-count {
+    font-size: smaller;
+}
+
+
+/* TABLE */
+
+.table-parent-container {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 500px);
+    padding: 0;
+}
+
+.table-container {
+    flex: 1;
+    min-height: 0;
+    overflow-y: scroll;
+}
+
+table {
+    width: 100%;
+}
+
+tr.mat-row,
+tr.mat-footer-row {
+    height: 30px;
+}
+
+.mat-cell {
+    font-size: small;
+}
+
+.table-rogue {
+    margin: auto;
+    width: 100%;
+    text-align: center;
+    vertical-align: middle;
+    color: firebrick;
+}
+
+.table-duration {
+    margin: 0 .1em;
+    vertical-align: middle;
+    color: firebrick;
+}
