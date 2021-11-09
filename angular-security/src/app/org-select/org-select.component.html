@@ -2,8 +2,8 @@
     <mat-card class="card-outer" fxLayout="column" style="max-width: 90%;">
         <mat-form-field apparence="outline" style="width: 30em; max-width: 100%">
             <mat-label>Organization</mat-label>
-            <mat-select [(ngModel)]="org_id">
-                <mat-option *ngFor="let org of orgs" [value]=org.org_id>
+            <mat-select [(ngModel)]="org">
+                <mat-option *ngFor="let org of orgs" [value]=org>
                     {{org.name}}
                 </mat-option>
             </mat-select>

@@ -7,10 +7,10 @@ const TokenSchema = new mongoose.Schema({
     created_by: { type: String, required: false }
 });
 
-// if (global.config.mongo.encKey && global.config.mongo.sigKey) {
-//     const encrypt = require('mongoose-encryption');
-//     AlertingSchema.plugin(encrypt, { encryptionKey: global.config.mongo.encKey, signingKey: global.config.mongo.sigKey });
-// }
+if (global.config.mongo.encKey && global.config.mongo.sigKey) {
+    const encrypt = require('mongoose-encryption');
+    TokenSchema.plugin(encrypt, { encryptionKey: global.config.mongo.encKey, signingKey: global.config.mongo.sigKey });
+}
 
 const Token = mongoose.model('Token', TokenSchema);
 

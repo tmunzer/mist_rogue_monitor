@@ -1,0 +1,12 @@
+<div fxLayout="row">
+    <button mat-raised-button color="accent" (click)="nav('dashboard')" [disabled]="current=='dashboard'" style="width: 150px;">
+        <span class="material-icons">
+            dashboard
+        </span> Dashboard
+        </button>
+    <button mat-raised-button color="accent" (click)="nav('config')" [disabled]="current=='config'" style="width: 150px;">
+        <span class="material-icons">
+            settings
+        </span> Configuration
+    </button>
+</div>

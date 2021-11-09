@@ -108,9 +108,12 @@ mongoose.connect('mongodb://' + mongo_host + '/' + global.config.mongo.base + "?
  CRON
  ================================================================*/
 const Rogue_Check = require("./bin/mist_rogue");
-cron.schedule('0 0 */1 * * *', function() {
+const Mail = require("./bin/mail");
+Mail.run();
+cron.schedule('0 0 */6 * * *', function() {
     Rogue_Check.new_turn("*")
     Rogue_Check.new_turn(h)
+    Mail.run();
 });
 /*================================================================
  APP
@@ -165,9 +168,15 @@ app.use('/api/config/token', admin_config_token);
 //Config Sites
 var admin_config_sites = require('./routes/api_configuration_sites');
 app.use('/api/config/sites', admin_config_sites);
+//Config Alerts
+var admin_config_alerts = require('./routes/api_configuration_alert');
+app.use('/api/config/alerts', admin_config_alerts);
 //Config Sites
 var admin_dashboard = require('./routes/api_dashboard');
 app.use('/api/dashboard', admin_dashboard);
+//Account
+var account_api = require('./routes/api_account');
+app.use('/api/account', account_api);
 //Admin
 var admin_api = require('./routes/api');
 app.use('/api', admin_api);

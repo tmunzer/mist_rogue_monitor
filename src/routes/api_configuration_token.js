@@ -9,10 +9,10 @@ var Account = require('../bin/models/account');
 var Token = require('../bin/models/token');
 var mist_token = require("../bin/mist_token");
 
-
-/*================================================================
- TOKEN FUNCTIONS
-================================================================*/
+const rbac = require("../bin/mist_check_rbac")
+    /*================================================================
+     TOKEN FUNCTIONS
+    ================================================================*/
 function createAccountAndToken(new_account, new_token, cb) {
     Account(new_account).save((err, saved_account) => {
         if (err) {
@@ -89,6 +89,7 @@ function saveNewToken(req, res, err, data) {
                     new_account = {
                         host: req.session.mist.host,
                         org_id: req.session.mist.org_id,
+                        org_name: req.session.mist.org_name,
                     }
                     createAccountAndToken(new_account, new_token, (status, data) => { res.status(status).json(data) })
                 }
@@ -100,81 +101,89 @@ function saveNewToken(req, res, err, data) {
  TOKEN ENTRYPOINT
 ================================================================*/
 
-router.get('/', (req, res) => {
-    if (req.session && req.session.mist && req.session.mist.org_id) {
-        data = {
-            configured: false,
-            created_by: null,
-            scope: null,
-            auto_mode: true,
-            can_delete: false
-        }
-        Account.findOne({ org_id: req.session.mist.org_id, host: req.session.mist.host })
-            .populate("_token")
-            .exec((err, account) => {
-                if (err) {
-                    console.error(err)
-                    res.status(500).send(err)
-                } else if (account && account._token) {
-                    data.token.configured = true
-                    data.token.created_by = account._token.created_by
-                    data.token.scope = account._token.scope
-                    if (account._token.apitoken_id == "manual_token") {
-                        data.token.auto_mode = false
-                    }
-                    if (account._token.scope == "user" && account._token.created_by == req.session.self.email) {
-                        data.token.can_delete = true
-                    } else if (account._token.scope == "org" && req.session.mist.privilege == "admin") {
-                        data.token.can_delete = true
-                    }
-                    res.json(data)
-                } else res.send(data)
-            })
-    } else res.status(401).send()
-})
-
-router.post("/", (req, res) => {
-    if (req.session && req.session.mist) {
-        if (req.body.scope) {
-            if (req.body.scope == "user") {
-                mist_token.generate(req.session.mist, "user", (err, data) => saveNewToken(req, res, err, data))
-            } else if (req.body.scope == "org") {
-                mist_token.generate(req.session.mist, "org", (err, data) => saveNewToken(req, res, err, data))
+router.get('/:org_id', (req, res) => {
+    rbac.check_org_access(req, res, (err, req) => {
+        if (err) err.send()
+        else {
+            data = {
+                configured: false,
+                created_by: null,
+                scope: null,
+                auto_mode: true,
+                can_delete: false
             }
-        } else if (req.body.apitoken) {
-            new_token = {
-                id: 'manual_token',
-                key: req.body.apitoken,
-            }
-            saveNewToken(req, res, null, new_token)
-        } else res.status(400).send("missing scope")
-    } else res.status(401).send()
-})
-
-router.delete("/", (req, res) => {
-    if (req.session && req.session.mist) {
-        Account.findOne({ host: req.session.mist.host, org_id: req.session.mist.org_id })
-            .populate("_token")
-            .exec((err, db_account) => {
-                if (db_account && db_account._token) {
-                    db_token = db_account._token
-                    mist_token.delete(req.session.mist, db_token, (err, data) => {
-                        if (err) {
-                            console.error(err)
-                            res.status(err.code).send(err.error)
-                        } else {
-                            Token.findByIdAndRemove(db_token._id, (err) => {
-                                Account.findOneAndUpdate({ _id: db_account._id },   { $unset: { _token: 1 } }).exec()
-                                res.json(null)
-                            })
+            Account.findOne({ org_id: req.session.mist.org_id, host: req.session.mist.host })
+                .populate("_token")
+                .exec((err, account) => {
+                    if (err) {
+                        console.error(err)
+                        res.status(500).send(err)
+                    } else if (account && account._token) {
+                        data.token.configured = true
+                        data.token.created_by = account._token.created_by
+                        data.token.scope = account._token.scope
+                        if (account._token.apitoken_id == "manual_token") {
+                            data.token.auto_mode = false
                         }
-                    })
-                } else {
-                    res.status(400).send("Account of Token not found")
-                }
-            })
-    } else res.status(401).send()
+                        if (account._token.scope == "user" && account._token.created_by == req.session.self.email) {
+                            data.token.can_delete = true
+                        } else if (account._token.scope == "org" && req.session.mist.privilege == "admin") {
+                            data.token.can_delete = true
+                        }
+                        res.json(data)
+                    } else res.send(data)
+                })
+        }
+    })
+})
 
+router.post("/:org_id", (req, res) => {
+    rbac.check_org_access(req, res, (err, req) => {
+        if (err) err.send()
+        else {
+            if (req.body.scope) {
+                if (req.body.scope == "user") {
+                    mist_token.generate(req.session.mist, "user", (err, data) => saveNewToken(req, res, err, data))
+                } else if (req.body.scope == "org") {
+                    mist_token.generate(req.session.mist, "org", (err, data) => saveNewToken(req, res, err, data))
+                }
+            } else if (req.body.apitoken) {
+                new_token = {
+                    id: 'manual_token',
+                    key: req.body.apitoken,
+                }
+                saveNewToken(req, res, null, new_token)
+            } else res.status(400).send("missing scope")
+        }
+    })
+})
+
+router.delete("/:org_id", (req, res) => {
+    rbac.check_org_access(req, res, (err, req) => {
+        if (err) err.send()
+        else {
+            Account.findOne({ host: req.session.mist.host, org_id: req.session.mist.org_id })
+                .populate("_token")
+                .exec((err, db_account) => {
+                    if (db_account && db_account._token) {
+                        db_token = db_account._token
+                        mist_token.delete(req.session.mist, db_token, (err, data) => {
+                            if (err) {
+                                console.error(err)
+                                res.status(err.code).send(err.error)
+                            } else {
+                                Token.findByIdAndRemove(db_token._id, (err) => {
+                                    Account.findOneAndUpdate({ _id: db_account._id },   { $unset: { _token: 1 } }).exec()
+                                    res.json(null)
+                                })
+                            }
+                        })
+                    } else {
+                        res.status(400).send("Account of Token not found")
+                    }
+                })
+        }
+    })
 })
 
 

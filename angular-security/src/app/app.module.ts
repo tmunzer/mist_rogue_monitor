@@ -11,14 +11,16 @@ import { ConfigurationComponent } from './configuration/configuration.component'
 import { ApitokenManualDialog } from './configuration/configuration.token.manual';
 import { ConfirmDialog } from './configuration/configuration.confirm';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { NavComponent } from './nav/nav.component';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
-import { ChartModule } from 'angular-highcharts';
+import { ChartsModule } from 'ng2-charts';
 
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -55,7 +57,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     DashboardComponent,
     ApitokenManualDialog,
     OrgSelectComponent,
-    //    CustomizationComponent
+    NavComponent,
   ],
   imports: [
     BrowserModule,
@@ -63,10 +65,11 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     BrowserAnimationsModule,
     FlexLayoutModule,
     FormsModule,
-    ChartModule,
+    ChartsModule,
     HttpClientModule,
     HttpClientJsonpModule,
     ReactiveFormsModule,
+    MatAutocompleteModule,
     MatButtonModule,
     MatCheckboxModule,
     MatCardModule,

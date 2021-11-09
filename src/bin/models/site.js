@@ -6,10 +6,10 @@ const SiteSchema = new mongoose.Schema({
     configured: { type: Boolean, default: false }
 });
 
-// if (global.config.mongo.encKey && global.config.mongo.sigKey) {
-//     const encrypt = require('mongoose-encryption');
-//     AlertingSchema.plugin(encrypt, { encryptionKey: global.config.mongo.encKey, signingKey: global.config.mongo.sigKey });
-// }
+if (global.config.mongo.encKey && global.config.mongo.sigKey) {
+    const encrypt = require('mongoose-encryption');
+    SiteSchema.plugin(encrypt, { encryptionKey: global.config.mongo.encKey, signingKey: global.config.mongo.sigKey });
+}
 
 const Site = mongoose.model('Site', SiteSchema);
 

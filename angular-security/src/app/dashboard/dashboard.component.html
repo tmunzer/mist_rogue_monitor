@@ -37,16 +37,20 @@
 <!-- Display -->
 
 <div fxLayout="row" style="height: 100%;">
-    <div fxLayout="column" class="nav">
-        <div>
-
-            <mat-form-field appearance="standard" style="margin:auto; width: 70%;">
-                <mat-label>Filter</mat-label>
-                <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Wlan" #input>
-            </mat-form-field>
+    <!-- NAV  -->
+    <div fxLayout="row" fxLayoutAlign="flex-end center" class="nav">
+        <div fxLayout="row" fxLayoutAlign="start">
+            <div fxLayout="row" fxLayoutAlign="center center" style="margin: 0 2em;">
+                <span style="font-weight: 100; margin-right: .5em;">Last Sync:</span>
+                <span>{{account.last_rogue_process | date:'short'}}</span>
+            </div>
+            <app-nav current="dashboard"></app-nav>
         </div>
-        <div>Configured</div>
+        <div style="margin: 1em;" fxLayout="column">
+            <button mat-raised-button color="accent" (click)='back_to_orgs()'>Back to Orgs</button>
+        </div>
     </div>
+    <!-- MAIN  -->
     <div fxLayout="column" fxLayoutAlign="stretch" style="margin-top: 0em; width: 100%; height: 100%;">
         <div fxLayout="row">
             <div fxLayout="column">
@@ -57,27 +61,60 @@
                     </ng-template>
                     <ng-template *ngTemplateOutlet="tplCount; context: {$implicit:{title: 'spoof',rogue_type: 'spoof', stats: stats.spoof, display: display.spoof, color: colors.spoof}}">
                     </ng-template>
-                    <ng-template *ngTemplateOutlet="tplCount; context: {$implicit:{title: 'detected aps', rogue_type: 'others', stats: stats.others, display: display.others, color: colors.others}}">
+                    <ng-template *ngTemplateOutlet="tplCount; context: {$implicit:{title: 'other aps', rogue_type: 'others', stats: stats.others, display: display.others, color: colors.others}}">
                     </ng-template>
                 </div>
                 <!-- Line Chart -->
-                <mat-card style="height: 12em; position: relative; display: block; " class="chart dashboard-content">
+
+                <mat-card class="dashboard-content chart" style="height: 12em; position: relative; display: block;">
                     <canvas baseChart style="height: 100%;" [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions" [legend]="lineChartLegend" chartType="line">
-                </canvas>
+                    </canvas>
                 </mat-card>
             </div>
             <!-- SCatter Chart -->
-            <mat-card style="height: 23em; position: relative; display: block; width: 50%; " class="chart dashboard-content">
-                <canvas baseChart [datasets]="scatterChartData" [options]="scatterChartOptions" [legend]="scatterChartLegend" [chartType]="scatterChartType">
-              </canvas>
+            <mat-card class="dashboard-content chart" style="height: 23em; position: relative; display: block; width: 50%;">
+                <canvas baseChart [datasets]="barChartData" [labels]="barChartLabels" [options]="barChartOptions" [legend]="barChartLegend" [chartType]="barChartType">
+                </canvas>
             </mat-card>
         </div>
 
 
-
         <mat-card class="dashboard-content table-parent-container">
-            <mat-paginator #paginator [pageIndex]="pageIndex" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" aria-label="Select page">
-            </mat-paginator>
+            <div fxLayout="row" fxLayoutAlign="space-between">
+                <div fxLayout="row" style="width: 62%;">
+                    <mat-form-field appearance="standard" style="width: 44%; padding: 0 1.2em;">
+                        <mat-label>Site</mat-label>
+                        <input type="text" matInput (keyup)="update_filter_sites()" [(ngModel)]="filter_site" [matAutocomplete]="auto">
+                        <button *ngIf="filter_site" matSuffix mat-icon-button aria-label="Clear" (click)="filter_site=''">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="display_site_autocomplete" style="width: 20em !important;" (closed)="apply_filter()">
+                            <mat-option *ngFor="let option of filter_site_list" [value]="option">
+                                {{option}}
+                            </mat-option>
+                        </mat-autocomplete>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="standard" style="width: 48%; padding: 0 1.2em;">
+                        <mat-label>SSID</mat-label>
+                        <input matInput (keyup)="apply_filter()" placeholder="Ex. Wlan" #input [(ngModel)]="filter_ssid">
+                        <button *ngIf="filter_ssid" matSuffix mat-icon-button aria-label="Clear" (click)="filter_ssid=''">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="standard" style="width: 20%; padding: 0 1em;">
+                        <mat-label>BSSID</mat-label>
+                        <input matInput (keyup)="apply_filter()" placeholder="Ex. Wlan" #input [(ngModel)]="filter_bssid">
+                        <button *ngIf="filter_bssid" matSuffix mat-icon-button aria-label="Clear" (click)="filter_bssid=''">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                    </mat-form-field>
+
+                </div>
+                <mat-paginator #paginator [pageIndex]="pageIndex" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" aria-label="Select page">
+                </mat-paginator>
+            </div>
             <div class="table-container">
                 <table mat-table [dataSource]="rogueDataSource" matSort>
 
@@ -86,69 +123,62 @@
 
                     <!-- SSID Column -->
                     <ng-container matColumnDef="ssid">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header> SSID </th>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 26%;"> SSID </th>
                         <td mat-cell *matCellDef="let element"> {{element.ssid}} </td>
                     </ng-container>
 
                     <!-- BSSID Column -->
                     <ng-container matColumnDef="bssid">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header> BSSID </th>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 10%;"> BSSID </th>
                         <td mat-cell *matCellDef="let element"> {{element.bssid}} </td>
                     </ng-container>
 
                     <!-- LAN Column -->
                     <ng-container matColumnDef="lan">
-                        <th mat-header-cell *matHeaderCellDef style="text-align: center;"> LAN </th>
+                        <th mat-header-cell *matHeaderCellDef style="text-align: center;" style="width: 6%; text-align: center;"> LAN </th>
                         <td mat-cell *matCellDef="let element">
                             <span class="material-icons table-rogue" *ngIf="element.rogue_type.lan">
-                        warning
-                    </span>
+                                warning
+                            </span>
                         </td>
                     </ng-container>
                     <!-- HONEYPOT Column -->
                     <ng-container matColumnDef="honeypot">
-                        <th mat-header-cell *matHeaderCellDef style="text-align: center;"> HONEYPOT </th>
+                        <th mat-header-cell *matHeaderCellDef style="text-align: center;" style="width: 6%; text-align: center;"> HONEYPOT </th>
                         <td mat-cell *matCellDef="let element">
                             <span class="material-icons table-rogue" *ngIf="element.rogue_type.honeypot">
-                        warning
-                    </span>
+                                warning
+                            </span>
                         </td>
                     </ng-container>
                     <!-- SPOOF Column -->
                     <ng-container matColumnDef="spoof">
-                        <th mat-header-cell *matHeaderCellDef style="text-align: center;"> SPOOF </th>
+                        <th mat-header-cell *matHeaderCellDef style="text-align: center;" style="width: 6%; text-align: center;"> SPOOF </th>
                         <td mat-cell *matCellDef="let element">
                             <span class="material-icons table-rogue" *ngIf="element.rogue_type.spoof">
-                        warning
-                    </span>
+                                warning
+                            </span>
                         </td>
                     </ng-container>
                     <!-- FIRST SEEN Column -->
                     <ng-container matColumnDef="first_seen">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header> FIRST SEEN </th>
-                        <td mat-cell *matCellDef="let element"> {{element.first_seen | date}}
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 20%;"> FIRST SEEN </th>
+                        <td mat-cell *matCellDef="let element">
+                            <span *ngIf="element.duration < 3600000">Less than 1 hour ago</span>
+                            <span *ngIf="element.duration >= 3600000 && element.duration < 7200000 ">1 hour ago</span>
+                            <span *ngIf="element.duration >= 7200000 && element.duration < 86400000 ">{{element.duration / (1000 * 3600) | number:'1.0-0'}} hours ago</span>
+                            <span *ngIf="element.duration >= 86400000 && element.duration < 172800000">1 day ago</span>
+                            <span *ngIf="element.duration >= 172800000">{{element.duration | number:'1.0-0'}} days ago</span>
                             <span class="material-icons table-duration" *ngIf="element.duration>86400000 && (element.rogue_type.lan || element.rogue_type.honeypot || element.rogue_type.spoof)">
                                 schedule
                             </span>
                         </td>
                     </ng-container>
-                    <!-- CHANNEL Column -->
-                    <ng-container matColumnDef="channel">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header> CHANNEL </th>
-                        <td mat-cell *matCellDef="let element"> {{element.channel}} </td>
-                    </ng-container>
-
                     <!-- SITE Column -->
                     <ng-container matColumnDef="site_name">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header> SITE </th>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 26%;"> SITE </th>
                         <td mat-cell *matCellDef="let element"> {{element.site_name}} </td>
                     </ng-container>
-                    <!-- RSSI Column -->
-                    <ng-container matColumnDef="avg_rssi">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header> AVG RSSI </th>
-                        <td mat-cell *matCellDef="let element"> {{element.avg_rssi}} </td>
-                    </ng-container>
-
                     <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
                     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 

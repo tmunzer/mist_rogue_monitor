@@ -19,6 +19,7 @@ function dynamicSchema(org_id) {
         first_seen: { type: Number, required: true },
         last_seen: { type: Number, required: true },
         last_updated: { type: Number, required: true },
+        email_sent: { type: Number, required: false, default: 0 },
         history: [{
             from: { type: Number, required: true },
             to: { type: Number, required: true },
@@ -36,10 +37,10 @@ function dynamicSchema(org_id) {
             delta_y: { type: Number, required: false }
         }]
     });
-    // if (global.config.mongo.encKey && global.config.mongo.sigKey) {
-    //     const encrypt = require('mongoose-encryption');
-    //     RogueSchema.plugin(encrypt, { encryptionKey: global.config.mongo.encKey, signingKey: global.config.mongo.sigKey });
-    // }
+    if (global.config.mongo.encKey && global.config.mongo.sigKey) {
+        const encrypt = require('mongoose-encryption');
+        RogueSchema.plugin(encrypt, { encryptionKey: global.config.mongo.encKey, signingKey: global.config.mongo.sigKey, excludeFromEncryption: ['site_id', 'bssid', 'email_sent', 'first_seen'] });
+    }
     return mongoose.model('org.' + org_id, RogueSchema);
 }
 

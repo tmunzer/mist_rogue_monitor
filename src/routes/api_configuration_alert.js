@@ -6,51 +6,52 @@ ADMIN:
 var express = require('express');
 var router = express.Router();
 var Account = require('../bin/models/account');
-var Site = require('../bin/models/site');
+var Alert = require('../bin/models/alert');
 
 const rbac = require("../bin/mist_check_rbac")
 
 /*================================================================
- SITE FUNCTIONS
+ ALERT FUNCTIONS
 ================================================================*/
-function createSite(account, new_site, cb) {
-    Site(new_site).save((err, saved_site) => {
+function createAlert(account, new_alert, cb) {
+    Alert(new_alert).save((err, saved_alert) => {
         if (err) {
             console.error(err)
             cb(500, err)
         } else {
-            account._site = saved_site;
+            account._alert = saved_alert;
             account.save((err) => {
                 if (err) {
                     console.error(err)
                     cb(500, err)
-                } else cb(200, saved_site)
+                } else cb(200, saved_alert)
             })
         }
     })
 }
 
-function updateSite(account, new_site, cb) {
+function updateAlert(account, new_alert, cb) {
     result = { status: 200, data: null }
-    Site.findOne({ _id: account._site }, (err, data) => {
-        for (const [key, value] of Object.entries(new_site)) {
+    Alert.findOne({ _id: account._alert }, (err, data) => {
+        for (const [key, value] of Object.entries(new_alert)) {
             if (!key.startsWith("_")) {
-                data[key] = new_site[key]
+                data[key] = new_alert[key]
             }
         }
-        data.save((err, saved_site) => {
+        data.save((err, saved_alert) => {
             if (err) {
                 console.error(err)
                 cb(500, err)
-            } else cb(200, saved_site)
+            } else cb(200, saved_alert)
         })
     })
 }
 
-function saveNewSite(req, res) {
-    new_site = {
-        all_sites: req.body.all_sites,
-        site_ids: req.body.site_ids,
+function saveNewAlert(req, res) {
+    new_alert = {
+        to_emails: req.body.to_emails,
+        min_age: req.body.min_age,
+        enabled: req.body.enabled,
         configured: true
     };
 
@@ -59,7 +60,7 @@ function saveNewSite(req, res) {
             host: req.session.mist.host,
             org_id: req.session.mist.org_id
         })
-        .populate("_site")
+        .populate("_alert")
         .exec((err, account) => {
             if (err) {
                 console.error(err)
@@ -67,9 +68,9 @@ function saveNewSite(req, res) {
                     // if the account already exists, create or update the Site
             } else if (account) {
                 // if the account already has a Site, update it
-                if (account._site) updateSite(account, new_site, (status, data) => res.status(status).json(data))
+                if (account._alert) updateAlert(account, new_alert, (status, data) => res.status(status).json(data))
                     // otherwise, create the Site entry in the DB for the account
-                else createSite(account, new_site, (status, data) => res.status(status).json(data))
+                else createAlert(account, new_alert, (status, data) => res.status(status).json(data))
                     // if the account does not exists, create the account and the Site                    
             } else {
                 res.status(500).json({ "error": "Account not found..." })
@@ -84,8 +85,7 @@ function saveNewSite(req, res) {
 router.post("/:org_id", (req, res) => {
     rbac.check_org_access(req, res, (err, req) => {
         if (err) err.send()
-        else saveNewSite(req, res)
-
+        else saveNewAlert(req, res)
     })
 })
 

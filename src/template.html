@@ -1,0 +1,74 @@
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>{title}</title>
+</head>
+
+<body style="background-color: #fff;margin: 0;padding: 0;min-width: 100%!important;">
+    <div style="background-color: #eee; max-width: 890px; min-width: 200px; margin-left: auto; margin-right: auto;">
+
+
+        <table style="width:100%; border:0; margin-top:2em; margin: auto">
+            <tr>
+                <td>
+                    <table>
+                        <tr>
+                            <td>
+                                <img style="height: 5em;" src="{logo}" alt="Logo" />
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <table class="content" style="width: 100%; margin: 1em;">
+                        <tr>
+                            <th colspan="6" style="padding-left: 2em; text-align: left;">
+                                Hello!
+                            </th>
+                        </tr>
+                        <tr>
+                            <td colspan="6" style="padding-top: 2em; padding-left: 2em; text-align: left;">
+                                Rogue Alert for the Org <b>{org_name}</b> (org_id: {org_id})
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" style="padding-left: 2em; text-align: left;">
+                                The following Rogue APs have been detected for more than {duration}:
+                            </td>
+                        </tr>
+                        <tr>
+                            <th style="padding-top: 1em; text-align: start; width: 6em;">
+                                Site
+                            </th>
+                            <th style="padding-top: 1em; text-align: start; width: 6em;">
+                                SSID
+                            </th>
+                            <th style="padding-top: 1em; text-align: start; width: 6em;">
+                                BSSID
+                            </th>
+                            <th style="padding-top: 1em; text-align: start; width: 6em;">
+                                LAN
+                            </th>
+                            <th style="padding-top: 1em; text-align: start; width: 6em;">
+                                HONEYPOT
+                            </th>
+                            <th style="padding-top: 1em; text-align: start; width: 6em;">
+                                SPOOF
+                            </th>
+                        </tr>
+                        <tr>
+                            {rogues}
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+
+</html>

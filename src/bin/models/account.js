@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const AccountSchema = new mongoose.Schema({
     host: { type: String, required: true },
     org_id: { type: String, required: true },
+    org_name: { type: String, required: true },
     last_rogue_process: { type: Number, required: false },
     errors: [{
         time: { type: Number },

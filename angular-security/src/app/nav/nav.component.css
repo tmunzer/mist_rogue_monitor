@@ -1,0 +1,42 @@
+/* NAV */
+
+.nav {
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    height: 64px;
+}
+
+.menu {
+    display: flex;
+    align-items: center;
+    padding: 0.5em;
+    width: 100%;
+    cursor: pointer;
+}
+
+button {
+    margin: 0 1em;
+}
+
+button:hover {
+    box-shadow: inset 0px 0px 3px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease-in-out;
+}
+
+button.mat-button-disabled {
+    background-color: #0e63ad !important;
+    color: white !important;
+}
+
+
+/* .menu-current,
+.menu:active {
+    background-color: white;
+    transition: background-color 0.1s ease-in-out;
+} */

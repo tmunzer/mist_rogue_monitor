@@ -17,6 +17,7 @@ export class OrgSelectComponent implements OnInit {
 
   constructor( private _http: HttpClient, private _router: Router) { }
 
+  org: Org = {org_id:"",name:""};
   org_id: string = "";
   orgs: Org[] = [];
   loading: boolean = false;
@@ -42,9 +43,10 @@ export class OrgSelectComponent implements OnInit {
   }
 
   submitOrg(): void {
-    this._http.post<any>('/api/orgs', {org_id: this.org_id}).subscribe({
+    this.org_id = this.org["org_id"];
+    this._http.post<any>('/api/orgs/'+this.org_id, {org: this.org}).subscribe({
       next: data => {
-        this._router.navigate(['/config']);
+        this._router.navigate(['orgs/'+this.org_id+'/dashboard']);
       },
       error: error => this.error_message(error.error)
     })

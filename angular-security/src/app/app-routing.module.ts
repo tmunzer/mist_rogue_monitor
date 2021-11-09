@@ -8,8 +8,8 @@ import { OrgSelectComponent } from './org-select/org-select.component';
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'orgs', component: OrgSelectComponent },
-  { path: 'config', component: ConfigurationComponent },
-  { path: 'dashboard', component: DashboardComponent },
+  { path: 'orgs/:org_id/config', component: ConfigurationComponent },
+  { path: 'orgs/:org_id/dashboard', component: DashboardComponent },
   //  { path: 'customization', component: CustomizationComponent },
   { path: '', redirectTo: '/login', pathMatch: 'full' }, // redirect to `first-component`
   { path: '**', redirectTo: '/login' }, // redirect to `first-component`

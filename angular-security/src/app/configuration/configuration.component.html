@@ -1,6 +1,16 @@
-<div fxLayout="column">
-    <div fxLayout="row wrap" fxLayoutAlign="start">
-        <div>
+<div fxLayout="column" style="height: 100%;">
+    <!-- NAV  -->
+    <div fxLayout="row" fxLayoutAlign="flex-end center" class="nav">
+        <div fxLayout="row" fxLayoutAlign="start">
+            <app-nav current="config"></app-nav>
+        </div>
+        <div style="margin: 1em;" fxLayout="column">
+            <button mat-raised-button color="accent" (click)='back_to_orgs()'>Back to Orgs</button>
+        </div>
+    </div>
+    <!-- MAIN  -->
+    <div fxLayout="column" fxLayoutAlign="space-between center">
+        <div style="display: grid; grid-template-columns: auto auto;">
             <mat-card>
                 <mat-card-title>Status</mat-card-title>
                 <mat-card-content>
@@ -23,10 +33,6 @@
                                 </div>
                             </td>
                         </tr>
-                    </table>
-                </mat-card-content>
-                <mat-card-content>
-                    <table>
                         <tr>
                             <th>Monitored Sites:</th>
                             <td>
@@ -48,12 +54,33 @@
                                 </div>
                             </td>
                         </tr>
+                        <tr>
+                            <th>Email Alerting:</th>
+                            <td>
+                                <div *ngIf="config.alert.configured" fxLayout="row">
+                                    <div class="material-icons green">done</div>
+                                    <div class="text" *ngIf="config.alert.enabled">
+                                        Email to {{config.alert.to_emails.length}} email
+                                        <span *ngIf="config.alert.to_emails.length <= 1">address</span>
+                                        <span *ngIf="config.alert.to_emails.length > 1">addresses</span>
+                                    </div>
+                                    <div class="text" *ngIf="!config.alert.enabled">
+                                        Email Alerting not enabled
+                                    </div>
+
+                                </div>
+                                <div *ngIf="!config.alert.configured" fxLayout="row">
+                                    <div class="material-icons red">close</div>
+                                    <div class="text">Not Configured</div>
+                                </div>
+                            </td>
+                        </tr>
                     </table>
                 </mat-card-content>
                 <mat-card-action fxLayoutAlign="end">
                     <button mat-button color="accent" [disabled]="!account_created" (click)="delete_account()">Delete
-                        Org
-                        Configuration</button>
+                            Org
+                            Configuration</button>
                 </mat-card-action>
             </mat-card>
             <!-- API Token -->
@@ -69,9 +96,10 @@
                 <mat-card-actions fxLayoutAlign="end">
                     <button mat-button color="accent" [disabled]="!config.token.configured || !config.token.auto_mode || !config.token.can_delete" (click)="delete_token()">Delete Token</button>
                     <button mat-raised-button color="primary" (click)="generate_token('user')">Generate User
-                        Token</button>
+                            Token</button>
                     <button mat-raised-button color="primary" (click)="generate_token('org')" *ngIf="privilege == 'admin'">Generate Org Token</button>
-                    <button mat-raised-button color="primary" (click)="open_apitoken_manual()">Use Manual Token</button>
+                    <button mat-raised-button color="primary" (click)="open_apitoken_manual()">Use Manual
+                            Token</button>
                 </mat-card-actions>
             </mat-card>
             <!-- Monitored Sites -->
@@ -111,11 +139,11 @@
                         </div>
                         <div fxLayout="column" style="justify-content: center;">
                             <button mat-icon-button color="accent" style="margin: 1em 0" [disabled]="config.sites.all_sites" (click)="add_monitored_sites()">
-                            <mat-icon>arrow_forward_ios</mat-icon>
-                          </button>
+                                    <mat-icon>arrow_forward_ios</mat-icon>
+                                </button>
                             <button mat-icon-button color="accent" style="margin: 1em 0" [disabled]="config.sites.all_sites" (click)="remove_monitored_sites()">
-                            <mat-icon>arrow_back_ios_new</mat-icon>
-                            </button>
+                                    <mat-icon>arrow_back_ios_new</mat-icon>
+                                </button>
                         </div>
                         <div class="selection-list">
                             <div fxLayout="row" style="align-items: center;">
@@ -134,77 +162,51 @@
                     </div>
                 </mat-card-content>
             </mat-card>
-        </div>
-        <!-- Alerting -->
-        <!-- <div>
+            <!-- Alerting -->
             <mat-card>
-                <mat-card-title fxLayout="row" fxLayoutAlign="start center">PSK
-                    <div *ngIf="psk.configured" class="material-icons green">done</div>
-                    <div *ngIf="!psk.configured" class="material-icons red">close</div>
+                <mat-card-title fxLayout="row" fxLayoutAlign="space-between center">
+                    <div>
+
+                        Email Alerting
+                        <div *ngIf="config.sites.configured" class="material-icons green">done
+                        </div>
+                        <div *ngIf="!config.sites.configured" class="material-icons red">close
+                        </div>
+                    </div>
+
+                    <button mat-raised-button color="primary" [disabled]="is_working || !config.token.configured" (click)="save_alert()">Save</button>
                 </mat-card-title>
-                <mat-card-subtitle>Define if you want to generate PSKs at org or site level, the PSK SSID and the PSK VLAN.
-                </mat-card-subtitle>
-                <mat-card-content fxLayout="column">
-                    <h2>Configuration</h2>
-                    <mat-form-field appearance="outline" *ngIf="privilege=='admin'">
-                        <mat-label>Level</mat-label>
-                        <mat-select [(value)]="psk.config.scope" [disabled]="!token.configured" (selectionChange)="changeScope()">
-                            <mat-option value="site">Site</mat-option>
-                            <mat-option value="org">Org</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                    <mat-form-field appearance="outline" *ngIf="psk.config.scope=='site'">
-                        <mat-label>Site</mat-label>
-                        <mat-select [(value)]="psk.config.site_id" [disabled]="!token.configured" (selectionChange)="getWlans()">
-                            <mat-option *ngFor="let site of sites" [value]="site.id">
-                                {{site.name}}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                    <mat-form-field appearance="outline">
-                        <mat-label>WLAN</mat-label>
-                        <mat-select [(value)]="psk.config.ssid" [disabled]="!token.configured">
-                            <mat-option *ngFor="let wlan_name of wlans" [value]="wlan_name">
-                                {{wlan_name}}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                    <div style="margin-bottom: 0.5em" fxLayout="row" fxLayoutAlign="start center">
-                        <span style="margin-right: 1em ;">Enable VLAN: </span>
+                <mat-card-subtitle></mat-card-subtitle>
+                <mat-card-content>
+                    <section>
+                        <mat-slide-toggle [(ngModel)]="config.alert.enabled">Enable Email Alerting
+                        </mat-slide-toggle>
+                    </section>
+                    <div style="justify-content: space-between; margin-top: 1em;" fxLayout="column" fxLayoutAlign="stretch">
 
-                        <mat-slide-toggle [(ngModel)]="enable_vlan">{{enable_vlan}}</mat-slide-toggle>
-                    </div>
-                    <mat-form-field appearance="outline" *ngIf="enable_vlan">
-                        <mat-label>VLAN ID</mat-label>
-                        <input matInput [(ngModel)]="psk.config.vlan_id" type="number" [disabled]="!token.configured">
-                    </mat-form-field>
-                    <mat-divider style="position: relative; margin: 1em 0;"></mat-divider>
+                        <div fxLayout="row" style="width: 100%;" fxLayour="row" fxLayoutAlign="start center" [style.color]="config.alert.enabled? 'black':'gray'">
+                            <div>Send email when a Rogue AP is detected for more than </div>
+                            <input placeholder="" [(ngModel)]="config.alert.min_age" [disabled]="config.alert.enabled==false" type="number" min="0" style="padding: 5px;width: 3em;margin: 5px;">
+                            <div *ngIf="config.alert.min_age <= 1">day</div>
+                            <div *ngIf="config.alert.min_age > 1">days</div>
+                        </div>
 
-                    <h2>PSK Generation</h2>
-                    <div fxLayout="row" style="margin-top: 1em;">
-                        <div>PSK Characters: </div>
-                        <div style="margin: 0 2em">
-                            <mat-checkbox [(ngModel)]="psk.config.min">a-z</mat-checkbox>
-                        </div>
-                        <div style="margin: 0 2em">
-                            <mat-checkbox [(ngModel)]="psk.config.cap">A-Z</mat-checkbox>
-                        </div>
-                        <div style="margin: 0 2em">
-                            <mat-checkbox [(ngModel)]="psk.config.num">0-9</mat-checkbox>
-                        </div>
-                        <div style="margin: 0 2em">
-                            <mat-checkbox [(ngModel)]="psk.config.spec">!@#$%^&*</mat-checkbox>
-                        </div>
-                    </div>
-                    <div style="margin-bottom: 0.5em">
-                        <mat-label>PSK Length: {{psk.config.length}}</mat-label>
-                        <mat-slider [(ngModel)]="psk.config.length" min="8" mac="63" step="1" thumbLabel tickInterval="1" style="width: 30em;"></mat-slider>
+                        <mat-form-field>
+                            <mat-label>Alert Emails Recipients</mat-label>
+                            <mat-chip-list #chipList aria-label="Emails">
+                                <mat-chip *ngFor="let email of config.alert.to_emails" removable="true" (removed)="remove_email(email)">
+                                    {{email}}
+                                    <button matChipRemove>
+                                            <mat-icon>cancel</mat-icon>
+                                        </button>
+                                </mat-chip>
+                                <input placeholder="New Email..." [disabled]="!config.alert.enabled" [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes" matChipInputAddOnBlur="true" (matChipInputTokenEnd)="add_email($event)">
+                            </mat-chip-list>
+                        </mat-form-field>
+
                     </div>
                 </mat-card-content>
-                <mat-card-actions fxLayoutAlign="end">
-                    <button mat-raised-button color="primary" [disabled]="!token.configured" (click)="savePskConfig()">Save</button>
-                </mat-card-actions>
             </mat-card>
-        </div> -->
+        </div>
     </div>
 </div>

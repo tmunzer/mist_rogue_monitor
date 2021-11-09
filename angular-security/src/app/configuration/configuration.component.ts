@@ -1,6 +1,6 @@
-import { Component, ViewChild, AfterViewInit } from '@angular/core';
+import { Component} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute} from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApitokenManualDialog } from './configuration.token.manual';
@@ -8,7 +8,9 @@ import { ApitokenManualDialog } from './configuration.token.manual';
 import { ErrorDialog } from './../common/error'
 import { ConfirmDialog } from './configuration.confirm';
 
-import { AuthConfigService } from "../services/auth.service";
+import {COMMA, ENTER, SPACE} from '@angular/cdk/keycodes';
+import {MatChipInputEvent} from '@angular/material/chips';
+
 
 export interface Site {
   id: string;
@@ -20,11 +22,11 @@ export interface Site {
 @Component({
   selector: 'app-configuration',
   templateUrl: './configuration.component.html',
-  styleUrls: ['./configuration.component.css']
+  styleUrls: ['./configuration.component.css', './../nav/nav.component.css']
 })
 export class ConfigurationComponent {
 
-  constructor(private _router: Router, private _http: HttpClient, public _dialog: MatDialog, private _snackBar: MatSnackBar, private _auth_config_service: AuthConfigService) { }
+  constructor(private _router: Router, private _http: HttpClient, public _dialog: MatDialog, private _snackBar: MatSnackBar, private _activeroute: ActivatedRoute) { }
 
   //COMMON
   privilege: string = "";
@@ -42,9 +44,20 @@ export class ConfigurationComponent {
       scope: "",
       can_delete: false,
       auto_mode: true
+    },
+    alert: {
+      configured: false,
+      enabled: false,
+      to_emails: Array(),
+      min_age: 1
     }
   }
 
+  // CHIPS
+  readonly separatorKeysCodes = [ENTER, COMMA, SPACE] as const;
+
+
+  org_id: string = "";
   sites: Site[] = [];
 
   filter_available_sites: String = "";
@@ -67,6 +80,9 @@ export class ConfigurationComponent {
   test: boolean = false;
 
   ngOnInit(): void {
+    this._activeroute.params.subscribe(params => {
+      this.org_id = params.org_id;
+    });
     this.get_config();
     this.get_sites();
   }
@@ -106,7 +122,7 @@ export class ConfigurationComponent {
 
   get_config(): void {
     this.toggle_is_working("config", true)
-    this._http.get<any>('/api/config/').subscribe({
+    this._http.get<any>('/api/config/'+this.org_id).subscribe({
       next: data => {
         this.parse_config_response(data);
         this.toggle_is_working("config", false)
@@ -146,7 +162,7 @@ export class ConfigurationComponent {
 
   get_sites(): void {
     this.toggle_is_working("sites", true)
-    this._http.get<Site[]>('/api/sites/').subscribe({
+    this._http.get<Site[]>('/api/sites/'+this.org_id).subscribe({
       next: data => {
         this.parse_sites_response(data);
         this.toggle_is_working("sites", false)
@@ -242,7 +258,7 @@ export class ConfigurationComponent {
       })
     }
     this.config.sites.configured = true;
-    this._http.post<any>('/api/config/sites', this.config.sites).subscribe({
+    this._http.post<any>('/api/config/sites/'+this.org_id, this.config.sites).subscribe({
       next: data => {
         this.config.sites = data;
         this.open_snack_bar("Monitored sites configured.", "Ok")
@@ -262,7 +278,7 @@ export class ConfigurationComponent {
     dialogRef.afterClosed().subscribe(result => {
       this.is_working = true
       if (result) {
-        this._http.delete("/api/account").subscribe({
+        this._http.delete("/api/account/"+this.org_id).subscribe({
           next: data => {
             this.is_working = false
             this.open_snack_bar("Account deleted.", "Ok")
@@ -283,7 +299,7 @@ export class ConfigurationComponent {
     this.config.token.configured = false;
     this.config.token.auto_mode = true;
     this.is_working = true;
-    this._http.post<any>('/api/config/token', { scope: scope }).subscribe({
+    this._http.post<any>('/api/config/token/'+this.org_id, { scope: scope }).subscribe({
       next: data => {
         this.config.token.configured = true;
         this.config.token.auto_mode = true;
@@ -302,7 +318,7 @@ export class ConfigurationComponent {
     this.config.token.configured = false;
     this.config.token.auto_mode = true;
     this.is_working = true;
-    this._http.post<any>('/api/config//token', { apitoken: apitoken }).subscribe({
+    this._http.post<any>('/api/config/token/'+this.org_id, { apitoken: apitoken }).subscribe({
       next: data => {
         this.config.token.configured = true;
         this.config.token.auto_mode = false;
@@ -321,7 +337,7 @@ export class ConfigurationComponent {
     dialogRef.afterClosed().subscribe(result => {
       this.is_working = true
       if (result) {
-        this._http.delete("/api/config//token").subscribe({
+        this._http.delete("/api/config/token/"+this.org_id).subscribe({
           next: data => {
             this.is_working = false
             this.config.token.configured = false;
@@ -334,6 +350,41 @@ export class ConfigurationComponent {
     })
   }
 
+
+  //////////////////////////////////////////////////////////////////////////////
+  /////           ALERT
+  //////////////////////////////////////////////////////////////////////////////
+
+  add_email(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+    // Add our fruit
+    if (value) {
+      this.config.alert.to_emails.push(value);
+    }
+
+    // Clear the input value
+    event.chipInput!.clear();
+  }
+
+  remove_email(email: string): void {
+    const index = this.config.alert.to_emails.indexOf(email);
+
+    if (index >= 0) {
+      this.config.alert.to_emails.splice(index, 1);
+    }
+  }
+
+  save_alert():void {
+    this._http.post<any>('/api/config/alerts/'+this.org_id, this.config.alert).subscribe({
+      next: data => {
+        this.config.alert = data;
+        this.open_snack_bar("Email Alert configured.", "Ok")
+      },
+      error: error => {
+        this.parse_error(error)
+      }
+    })
+  }
 
   //////////////////////////////////////////////////////////////////////////////
   /////           DIALOG BOXES
@@ -360,5 +411,11 @@ export class ConfigurationComponent {
     dialogRef.afterClosed().subscribe(result => {
       if (result) { this.save_manual_token(result) }
     });
+  }
+  //////////////////////////////////////////////////////////////////////////////
+  /////           BCK TO ORGS
+  //////////////////////////////////////////////////////////////////////////////
+  back_to_orgs():void {
+    this._router.navigate(["/orgs"])
   }
 }
