@@ -5,10 +5,6 @@ const AccountSchema = new mongoose.Schema({
     org_id: { type: String, required: true },
     org_name: { type: String, required: true },
     last_rogue_process: { type: Number, required: false },
-    errors: [{
-        time: { type: Number },
-        message: { type: String }
-    }],
     disabled: { type: Boolean, default: false },
     update_hour: { type: String },
     _token: { type: mongoose.Schema.ObjectId, ref: "Token" },

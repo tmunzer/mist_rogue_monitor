@@ -187,7 +187,9 @@ function _refreshRogues(mist, date, site_ids = [], all_sites = false) {
 module.exports.new_turn = function(hour) {
     const date = Date.now()
     console.log(hour)
-    Accounts.find({ update_hour: hour, disabled: false })
+        // TODO: 
+        //Accounts.find({ update_hour: hour, disabled: false })
+    Accounts.find({ disabled: false })
         .populate("_token")
         .populate("_site")
         .exec((err, accounts) => {
