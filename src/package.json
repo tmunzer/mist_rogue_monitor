@@ -1,7 +1,28 @@
 {
-  "dependencies": {
-    "body-parser": "^1.19.0",
-    "express": "^4.17.1",
-    "node-cron": "^3.0.0"
-  }
+    "name": "mws",
+    "version": "0.0.0",
+    "private": true,
+    "scripts": {
+        "start": "node ./bin/www"
+    },
+    "dependencies": {
+        "body-parser": "^1.19.0",
+        "express": "^4.17.1",
+        "node-cron": "^3.0.0",
+        "bluebird": "^3.7.2",
+        "btoa": "^1.2.1",
+        "connect-mongodb-session": "^2.4.1",
+        "cookie-parser": "^1.4.5",
+        "cron": "^1.8.2",
+        "debug": "^4.3.1",
+        "express-session": "^1.17.1",
+        "googleapis": "^72.0.0",
+        "jsonwebtoken": "^8.5.1",
+        "mdb-ui-kit": "^3.4.0",
+        "mongoose": "^5.11.10",
+        "mongoose-encryption": "^2.1.0",
+        "morgan": "^1.10.0",
+        "nodemailer": "^6.5.0",
+        "serve-favicon": "^2.5.0"
+    }
 }

@@ -122,7 +122,7 @@ router.get("/stats/:org_id", (req, res) => {
                                     rogue_types.forEach(rogue_type => {
                                         data[rogue_type]['now'] = datasets[rogue_type][datasets[rogue_type].length - 1]
                                         data[rogue_type]['last_week'] = datasets[rogue_type][datasets[rogue_type].length - 8]
-                                        data.datasets.push({ label: rogue_type, data: datasets[rogue_type], backgroundColor: "rgba(0,0,0,0)", pointBackgroundColor: colors[rogue_type], borderColor: colors[rogue_type], pointBorderColor: colors[rogue_type] })
+                                        data.datasets.push({ label: rogue_type, data: datasets[rogue_type], backgroundColor: "rgba(0,0,0,0)", pointBackgroundColor: colors[rogue_type], borderColor: colors[rogue_type], pointBorderColor: colors[rogue_type], pointHoverBorderColor: colors[rogue_type], pointHoverBackgroundColor: colors[rogue_type] })
                                     })
                                     res.json(data)
                                 }

@@ -92,10 +92,10 @@ export class DashboardComponent implements OnInit {
   pageSizeOptions: number[] = [5, 25, 50]
 
 
-  filter_site: string ="";
+  filter_site: string = "";
   filter_site_list: string[] = [];
-  filter_ssid: string ="";
-  filter_bssid: string ="";
+  filter_ssid: string = "";
+  filter_bssid: string = "";
 
   /////////////////////////
   // Others
@@ -122,34 +122,34 @@ export class DashboardComponent implements OnInit {
       {
         "label": "lan",
         "data": [0, 0, 0, 0, 0, 0, 0, 0],
-        "backgroundColor": "rgba(0,0,0,0)",
         "pointBackgroundColor": this.colors["lan"],
-        "borderColor": this.colors["lan"],
-        "pointBorderColor": this.colors["lan"]
+        "pointBorderColor": this.colors["lan"],
+        "pointHoverBorderColor": this.colors["lan"],
+        "pointHoverBackgroundColor": this.colors["lan"]
       },
       {
         "label": "honeypot",
         "data": [0, 0, 0, 0, 0, 0, 0, 0],
-        "backgroundColor": "rgba(0,0,0,0)",
         "pointBackgroundColor": this.colors["honeypot"],
-        "borderColor": this.colors["honeypot"],
-        "pointBorderColor": this.colors["honeypot"]
+        "pointBorderColor": this.colors["honeypot"],
+        "pointHoverBorderColor": this.colors["honeypot"],
+        "pointHoverBackgroundColor": this.colors["honeypot"]
       },
       {
         "label": "spoof",
         "data": [0, 0, 0, 0, 0, 0, 0, 0],
-        "backgroundColor": "rgba(0,0,0,0)",
         "pointBackgroundColor": this.colors["spoof"],
-        "borderColor": this.colors["spoof"],
-        "pointBorderColor": this.colors["spoof"]
+        "pointBorderColor": this.colors["spoof"],
+        "pointHoverBorderColor": this.colors["spoof"],
+        "pointHoverBackgroundColor": this.colors["spoof"]
       },
       {
         "label": "others",
         "data": [0, 0, 0, 0, 0, 0, 0, 0],
-        "backgroundColor": "rgba(0,0,0,0)",
         "pointBackgroundColor": this.colors["others"],
-        "borderColor": this.colors["others"],
-        "pointBorderColor": this.colors["others"]
+        "pointBorderColor": this.colors["others"],
+        "pointHoverBorderColor": this.colors["others"],
+        "pointHoverBackgroundColor": this.colors["others"]
       }
     ]
   }
@@ -275,10 +275,10 @@ export class DashboardComponent implements OnInit {
     }
 
     var data = [
-      { data: Array(), label: 'LAN', stack: 'a', backgroundColor: this.colors["lan"], borderColor: this.colors["lan"] },
-      { data: Array(), label: 'HONEYPOT', stack: 'a', backgroundColor: this.colors["honeypot"], borderColor: this.colors["honeypot"] },
-      { data: Array(), label: 'SPOOF', stack: 'a', backgroundColor: this.colors["spoof"], borderColor: this.colors["spoof"] },
-      { data: Array(), label: 'OTHERS', stack: 'a', backgroundColor: this.colors["others"], borderColor: this.colors["others"] }
+      { data: Array(), label: 'LAN', stack: 'a', backgroundColor: this.colors["lan"], borderColor: this.colors["lan"], hoverBackgroundColor: this.colors["lan"], hoverBorderColor: this.colors["lan"] },
+      { data: Array(), label: 'HONEYPOT', stack: 'a', backgroundColor: this.colors["honeypot"], borderColor: this.colors["honeypot"], hoverBackgroundColor: this.colors["honeypot"], hoverBorderColor: this.colors["honeypot"] },
+      { data: Array(), label: 'SPOOF', stack: 'a', backgroundColor: this.colors["spoof"], borderColor: this.colors["spoof"], hoverBackgroundColor: this.colors["spoof"], hoverBorderColor: this.colors["spoof"] },
+      { data: Array(), label: 'OTHERS', stack: 'a', backgroundColor: this.colors["others"], borderColor: this.colors["others"], hoverBackgroundColor: this.colors["others"], hoverBorderColor: this.colors["others"] }
     ];
 
     this.barChartLabels = [];
@@ -312,11 +312,11 @@ export class DashboardComponent implements OnInit {
   }
 
 
-  update_filter_sites(){    
+  update_filter_sites() {
     var tmp = [];
-    for (var site_id in this.sites){
+    for (var site_id in this.sites) {
       var site_name: string = (this.sites as any)[site_id];
-      if (this.filter_site == "" || site_name.toLocaleLowerCase().includes(this.filter_site.toLocaleLowerCase())){
+      if (this.filter_site == "" || site_name.toLocaleLowerCase().includes(this.filter_site.toLocaleLowerCase())) {
         tmp.push(site_name);
       }
     }
@@ -327,14 +327,14 @@ export class DashboardComponent implements OnInit {
 
   apply_filter() {
     this.roguesDisplayed = [];
-    this.stats.rogues.forEach(rogue =>{
+    this.stats.rogues.forEach(rogue => {
       const rogue_element = (rogue as RogueElement);
       if (
         (this.filter_site == "" || rogue_element.site_name.toLocaleLowerCase().includes(this.filter_site.toLocaleLowerCase())) &&
-        (this.filter_ssid == "" || rogue_element.ssid.toLocaleLowerCase().includes(this.filter_ssid.toLocaleLowerCase())) && 
-        (this.filter_bssid == "" || rogue_element.bssid.toLocaleLowerCase().includes(this.filter_bssid.toLocaleLowerCase())) 
+        (this.filter_ssid == "" || rogue_element.ssid.toLocaleLowerCase().includes(this.filter_ssid.toLocaleLowerCase())) &&
+        (this.filter_bssid == "" || rogue_element.bssid.toLocaleLowerCase().includes(this.filter_bssid.toLocaleLowerCase()))
       )
-      this.roguesDisplayed.push(rogue)
+        this.roguesDisplayed.push(rogue)
     })
 
     this.rogueDataSource = new MatTableDataSource<RogueElement>(this.roguesDisplayed)
@@ -380,7 +380,7 @@ export class DashboardComponent implements OnInit {
 
   }
 
-  sort_site_autocomplete(a:any, b:any) {
+  sort_site_autocomplete(a: any, b: any) {
     return a.value.toLowerCase() < b.value.toLowerCase() ? -1 : 1;
   }
 

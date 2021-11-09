@@ -159,9 +159,6 @@ app.use('/bower_components', express.static('../bower_components'));
 
 //===============ROUTES=================
 // // User Interface
-//Admin Login
-var admin = require('./routes/dashboard');
-app.use('/dashboard', admin);
 //Admin
 var admin_config_token = require('./routes/api_configuration_token');
 app.use('/api/config/token', admin_config_token);
@@ -180,10 +177,13 @@ app.use('/api/account', account_api);
 //Admin
 var admin_api = require('./routes/api');
 app.use('/api', admin_api);
+//Admin Login
+var admin_html = require('./routes/dashboard');
+//app.use('/', admin_html);
 
 //Otherwise
 app.get("*", function(req, res) {
-    res.redirect("/dashboard");
+    res.redirect("/");
 });
 
 // catch 404 and forward to error handler
