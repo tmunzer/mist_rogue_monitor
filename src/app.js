@@ -179,7 +179,7 @@ var admin_api = require('./routes/api');
 app.use('/api', admin_api);
 //Admin Login
 var admin_html = require('./routes/dashboard');
-//app.use('/', admin_html);
+app.use('/', admin_html);
 
 //Otherwise
 app.get("*", function(req, res) {
