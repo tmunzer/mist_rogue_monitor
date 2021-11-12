@@ -20,18 +20,20 @@ router.get("/account/:org_id", (req, res) => {
         else {
             Account
                 .findOne({ org_id: req.session.mist.org_id, host: req.session.mist.host })
-                .populate("_token")
+                .populate("_alert")
                 .populate("_site")
                 .exec((err, account) => {
                     var configured = false;
-                    if (account._site.configured && account._token.apitoken) configured = true;
+                    if (account._site && account._site.configured && account._token.apitoken) configured = true;
                     if (err) { res.status(500).json(err) } else if (account) {
                         data = {
                             last_rogue_process: account.last_rogue_process,
                             errors: account.errors,
                             disabled: account.disabled,
-                            configured: configured
+                            configured: configured,
+                            min_age: 1
                         }
+                        if (account._alert) data.min_age = account._alert.min_age
                         res.json(data)
                     }
                 })
@@ -80,7 +82,7 @@ router.get("/stats/:org_id", (req, res) => {
 
                                     rogues.forEach(rogue => {
                                         // If the AP has been seen during last check
-                                        if (rogue.last_seen == account.last_rogue_process) {
+                                        if (rogue.last_seen > new Date().setDate(date.getDate() - 1)) {
                                             // add it on the list
                                             data.rogues.push({
                                                 site_id: rogue.site_id,
@@ -90,12 +92,13 @@ router.get("/stats/:org_id", (req, res) => {
                                                 avg_rssi: rogue.avg_rssi,
                                                 duration: date - rogue.first_seen,
                                                 first_seen: rogue.first_seen,
+                                                last_seen: rogue.last_seen,
                                                 rogue_type: rogue.rogue_type
                                             })
                                             rogue_types.forEach(rogue_type => {
                                                 if (rogue.rogue_type[rogue_type]) {
                                                     // test to remove the rogues from the "others" category
-                                                    if (rogue_type != "others" || (!rogue.rogue_type["lan"] && !rogue.rogue_type["honeypot"] && !rogue.rogue_type["spoot"])) {
+                                                    if (rogue_type != "others" || (!rogue.rogue_type["lan"] && !rogue.rogue_type["honeypot"] && !rogue.rogue_type["spoof"])) {
                                                         datasets[rogue_type][datasets[rogue_type].length - 1] = datasets[rogue_type][datasets[rogue_type].length - 1] + 1;
                                                     }
                                                 }
@@ -106,11 +109,14 @@ router.get("/stats/:org_id", (req, res) => {
                                         rogue_types.forEach(rogue_type => {
                                             if (rogue.rogue_type[rogue_type]) {
                                                 // test to remove the rogues from the "others" category
-                                                if (rogue_type != "others" || (!rogue.rogue_type["lan"] && !rogue.rogue_type["honeypot"] && !rogue.rogue_type["spoot"])) {
-                                                    for (var i = 0; i <= 30; i++) {
-                                                        var d = data.labels[i]
-                                                        if (rogue.first_seen < d && rogue.last_seen > d) {
-                                                            datasets[rogue_type][i] = datasets[rogue_type][i] + 1;
+                                                if (rogue_type != "others" || (!rogue.rogue_type["lan"] && !rogue.rogue_type["honeypot"] && !rogue.rogue_type["spoof"])) {
+                                                    for (var e = 0; e < 30; e++) {
+                                                        var d = data.labels[e]
+                                                        if (rogue.first_seen < d && (rogue.last_seen > d || rogue.last_seen == account.last_rogue_process)) {
+                                                            if (!rogue.rogue_type["lan"] && !rogue.rogue_type["honeypot"] && !rogue.rogue_type["spoof"]) {
+                                                                if (i < 30) console.log(new Date(rogue))
+                                                            }
+                                                            datasets[rogue_type][e] = datasets[rogue_type][e] + 1;
                                                         }
                                                     }
                                                 }
