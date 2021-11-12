@@ -24,8 +24,12 @@ router.get("/account/:org_id", (req, res) => {
                 .populate("_site")
                 .exec((err, account) => {
                     var configured = false;
-                    if (account._site && account._site.configured && account._token.apitoken) configured = true;
-                    if (err) { res.status(500).json(err) } else if (account) {
+                    if (err) res.status(500).json(err)
+                    else if (!account) res.status(404).send()
+                    else if (!account._site || !account._site.configured) res.status(404).send()
+                    else if (!account._token) res.status(404).send()
+                    else {
+                        configured = true;
                         data = {
                             last_rogue_process: account.last_rogue_process,
                             errors: account.errors,
@@ -148,10 +152,10 @@ router.get("/sites/:org_id", (req, res) => {
                 .populate("_token")
                 .exec((err, account) => {
                     if (err) res.status(500).json({ error: err })
-                    else if (!account) es.status(400).json({ err: "Account not found" })
+                    else if (!account) res.status(404).json({ err: "Account not found" })
                     else {
-                        if (!account._token) res.status(400).json({ err: "Account not configured" })
-                        else if (!account._token.apitoken) res.status(400).json({ err: "API Token not configured" })
+                        if (!account._token) res.status(404).json({ err: "Account not configured" })
+                        else if (!account._token.apitoken) res.status(404).json({ err: "API Token not configured" })
                         else {
                             const mist = {
                                 host: req.session.mist.host,

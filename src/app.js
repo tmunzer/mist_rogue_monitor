@@ -109,7 +109,6 @@ mongoose.connect('mongodb://' + mongo_host + '/' + global.config.mongo.base + "?
  ================================================================*/
 const Rogue_Check = require("./bin/mist_rogue");
 const Mail = require("./bin/mail");
-Mail.run();
 cron.schedule('0 0 */6 * * *', function() {
     Rogue_Check.new_turn("*")
     Rogue_Check.new_turn(h)

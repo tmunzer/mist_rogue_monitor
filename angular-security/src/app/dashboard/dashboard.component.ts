@@ -162,6 +162,8 @@ export class DashboardComponent implements OnInit {
     min_age: 1
   }
 
+  box_opened: Boolean = false;
+
   //////////////////////////////////////////////////////////////////////////////
   /////           INIT
   //////////////////////////////////////////////////////////////////////////////
@@ -174,10 +176,23 @@ export class DashboardComponent implements OnInit {
   }
 
 
+  not_configured(): void {
+    if (!this.box_opened) {
+      this.box_opened = true;
+      const dialogRef = this._dialog.open(ErrorDialog, {
+        data: { title: "Account Not Configured", text: "Do you want to configure it now?" }
+      })
+      dialogRef.afterClosed().subscribe(result => {
+        this.box_opened = false;
+        if (result) this._router.navigate(["/orgs/" + this.org_id + "/config"])
+      })
+    }
+  }
+
   parse_error(error: any): void {
-    if (error.status == "401") {
-      this._router.navigate(["/"])
-    } else {
+    if (error.status == "401") this._router.navigate(["/"])
+    else if (error.status == '404') this.not_configured()
+    else {
       var message: string = "Unable to contact the server... Please try again later... "
       if (error.error && error.error.message) message = error.error.message
       else if (error.error) message = error.error
@@ -393,9 +408,9 @@ export class DashboardComponent implements OnInit {
   /////           DIALOG BOXES
   //////////////////////////////////////////////////////////////////////////////
   // ERROR
-  open_error(message: string): void {
+  open_error(title: string, text: string): void {
     const dialogRef = this._dialog.open(ErrorDialog, {
-      data: message
+      data: { title: title, message: text }
     });
   }
 
