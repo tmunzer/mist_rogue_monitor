@@ -158,7 +158,8 @@ export class DashboardComponent implements OnInit {
     last_rogue_process: 0,
     errors: 0,
     disabled: 0,
-    configured: false
+    configured: false,
+    min_age: 1
   }
 
   //////////////////////////////////////////////////////////////////////////////

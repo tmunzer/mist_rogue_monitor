@@ -168,8 +168,8 @@
                             <span *ngIf="element.duration >= 3600000 && element.duration < 7200000 ">1 hour ago</span>
                             <span *ngIf="element.duration >= 7200000 && element.duration < 86400000 ">{{element.duration / (1000 * 3600) | number:'1.0-0'}} hours ago</span>
                             <span *ngIf="element.duration >= 86400000 && element.duration < 172800000">1 day ago</span>
-                            <span *ngIf="element.duration >= 172800000">{{element.duration | number:'1.0-0'}} days ago</span>
-                            <span class="material-icons table-duration" *ngIf="element.duration>86400000 && (element.rogue_type.lan || element.rogue_type.honeypot || element.rogue_type.spoof)">
+                            <span *ngIf="element.duration >= 172800000">{{(element.duration / 86400000) | number:'1.0-0'}} days ago</span>
+                            <span class="material-icons table-duration" *ngIf="element.duration> (account.min_age * 86400000) && (element.rogue_type.lan || element.rogue_type.honeypot || element.rogue_type.spoof)">
                                 schedule
                             </span>
                         </td>
