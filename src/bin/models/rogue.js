@@ -39,7 +39,7 @@ function dynamicSchema(org_id) {
     });
     if (global.config.mongo.encKey && global.config.mongo.sigKey) {
         const encrypt = require('mongoose-encryption');
-        RogueSchema.plugin(encrypt, { encryptionKey: global.config.mongo.encKey, signingKey: global.config.mongo.sigKey, excludeFromEncryption: ['site_id', 'bssid', 'email_sent', 'first_seen'] });
+        RogueSchema.plugin(encrypt, { encryptionKey: global.config.mongo.encKey, signingKey: global.config.mongo.sigKey, excludeFromEncryption: ['site_id', 'bssid', 'email_sent', 'first_seen', 'last_seen', 'last_updated', 'missed_checks'] });
     }
     return mongoose.model('org.' + org_id, RogueSchema);
 }
