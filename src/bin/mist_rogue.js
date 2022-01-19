@@ -11,6 +11,33 @@ function _logError(message, err) {
 }
 
 /**
+ * Function to update the rogues than have not been seen during the last check
+ * @param {*} rogues_collection 
+ * @param {*} site_id 
+ * @param {*} date 
+ */
+function _updateRoguesNotSeen(rogues_collection, site_id, date) {
+    // for all the rogues not detected anymore, saving the data in the history
+    rogues_collection
+        .find({ site_id: site_id, updated_at: { $lt: date } })
+        .exec((err, rogues) => {
+            if (err) console.log(err)
+            if (rogues) {
+                rogues.forEach(rogue_from_db => {
+
+                    rogue_from_db.first_seen = 0;
+                    rogue_from_db.updated_at = date;
+
+                    rogue_from_db.save((err, rogue_saved) => {
+                        if (err) console.log(err);
+                        //console.log(rogue_saved)
+                    })
+                })
+            }
+        })
+}
+
+/**
  * Function to update the entry in the DB
  * @param {*} rogue_type 
  * @param {*} rogue_from_db 
@@ -18,50 +45,41 @@ function _logError(message, err) {
  * @param {*} date 
  */
 function _updateRogue(rogue_type, rogue_from_db, rogue_from_mist, date) {
-    if (rogue_from_db.last_updated != rogue_from_db.last_seen) {
-        rogue_from_db.first_seen = date;
-    }
-    var new_history = {}
-    if (!rogue_from_db.rogue_type[rogue_type]) {
-        if (rogue_from_db.last_updated != date) {
-            new_history.rogue_type = rogue_from_db.rogue_type;
+    // because the some ap can be seen as a rogue, spoof, ... at the same time, check if the ap has 
+    // already been updated during this turn
+    if (rogue_from_db.updated_at != date) {
+        if (rogue_from_db.first_seen == 0) {
+            rogue_from_db.first_seen = date;
         }
+        rogue_from_db.last_seen = date;
+        rogue_from_db.rogue_type[rogue_type] = true;
+
+        rogue_from_db.ssid.push({ ts: date, value: rogue_from_mist.ssid })
+        while (rogue_from_db.ssid.length > 30) { rogue_from_db.ssid.shift() }
+
+        //rogue_from_db.ap_mac.push({ts: date, value: rogue_from_mist.ap_mac})
+        //while (rogue_from_db.ap_mac.length > 30) {rogue_from_db.ap_mac.shift()}
+
+        rogue_from_db.channel.push({ ts: date, value: rogue_from_mist.channel })
+        while (rogue_from_db.channel.length > 30) { rogue_from_db.channel.shift() }
+
+        rogue_from_db.avg_rssi.push({ ts: date, value: rogue_from_mist.avg_rssi })
+        while (rogue_from_db.avg_rssi.length > 30) { rogue_from_db.avg_rssi.shift() }
+
+        rogue_from_db.num_aps.push({ ts: date, value: rogue_from_mist.num_aps })
+        while (rogue_from_db.num_aps.length > 30) { rogue_from_db.num_aps.shift() }
+
+        rogue_from_db.delta_x.push({ ts: date, value: rogue_from_mist.delta_x })
+        while (rogue_from_db.delta_x.length > 30) { rogue_from_db.delta_x.shift() }
+
+        rogue_from_db.delta_y.push({ ts: date, value: rogue_from_mist.delta_y })
+        while (rogue_from_db.delta_y.length > 30) { rogue_from_db.delta_y.shift() }
+
+    } else {
         rogue_from_db.rogue_type[rogue_type] = true;
     }
-    if (rogue_from_db.ssid != rogue_from_mist["ssid"]) {
-        new_history.ssid = rogue_from_mist["ssid"];
-        rogue_from_db.ssid = rogue_from_mist["ssid"];
-    }
-    if (rogue_from_db.channel != rogue_from_mist["channel"]) {
-        new_history.channel = rogue_from_mist["channel"];
-        rogue_from_db.channel = rogue_from_mist["channel"];
-    }
-    if (rogue_from_db.avg_rssi != rogue_from_mist["avg_rssi"]) {
-        new_history.avg_rssi = rogue_from_mist["avg_rssi"];
-        rogue_from_db.avg_rssi = rogue_from_mist["avg_rssi"];
-    }
-    if (rogue_from_db.num_aps != rogue_from_mist["num_aps"]) {
-        new_history.num_aps = rogue_from_mist["num_aps"];
-        rogue_from_db.num_aps = rogue_from_mist["num_aps"];
-    }
-    if (rogue_from_db.delta_x != rogue_from_mist["delta_x"]) {
-        new_history.delta_x = rogue_from_mist["delta_x"];
-        rogue_from_db.delta_x = rogue_from_mist["delta_x"];
-    }
-    if (rogue_from_db.delta_y != rogue_from_mist["delta_y"]) {
-        new_history.delta_y = rogue_from_mist["delta_y"];
-        rogue_from_db.delta_y = rogue_from_mist["delta_y"];
-    }
-    rogue_from_db.last_seen = date
-    if (Object.keys(new_history).length > 0) {
-        rogue_from_db["last_updated"] = date;
-        new_history["to"] = date;
-        new_history["from"] = rogue_from_db["last_updated"];
-        if (!rogue_from_db["history"].length > 0) {
-            rogue_from_db["history"] = [];
-        }
-        rogue_from_db["history"].push(new_history);
-    }
+
+    rogue_from_db.updated_at = date;
     rogue_from_db.save((err, rogue_saved) => {
         if (err) console.log(err);
         //console.log(rogue_saved)
@@ -85,17 +103,18 @@ function _createRogue(site_id, rogue_type, rogue_from_mist, date, rogues_collect
             spoof: false,
             others: false
         },
-        ssid: rogue_from_mist["ssid"],
+        //ap_mac: rogue_from_mist["ap_mac"],
         bssid: rogue_from_mist["bssid"],
-        channel: rogue_from_mist["channel"],
-        avg_rssi: rogue_from_mist["avg_rssi"],
-        num_aps: rogue_from_mist["num_aps"],
-        delta_x: rogue_from_mist["delta_x"],
-        delta_y: rogue_from_mist["delta_y"],
+        ssid: [{ ts: date, value: rogue_from_mist["ssid"] }],
+        channel: [{ ts: date, value: rogue_from_mist["channel"] }],
+        avg_rssi: [{ ts: date, value: rogue_from_mist["avg_rssi"] }],
+        num_aps: [{ ts: date, value: rogue_from_mist["num_aps"] }],
+        delta_x: [{ ts: date, value: rogue_from_mist["delta_x"] }],
+        delta_y: [{ ts: date, value: rogue_from_mist["delta_y"] }],
         first_seen: date,
         last_seen: date,
-        last_updated: date,
-        history: []
+        updated_at: date,
+        created_at: date
     }
     new_rogue.rogue_type[rogue_type] = true;
 
@@ -108,7 +127,7 @@ function _createRogue(site_id, rogue_type, rogue_from_mist, date, rogues_collect
 /**
  * Function to get the rogue list form Mist
  * @param {*} mist 
- * @param {*} site_id 
+ * @param {String} site_id 
  * @param {*} rogue_type 
  * @param {*} callback 
  */
@@ -128,8 +147,8 @@ function _getRogues(mist, path, cb, rogues = []) {
  * This function is retrieving all the honeypot/others/lan/spoof rogue APs, and 
  * update the DB (create or update the entry) for all the rogue currently seen 
  * @param {*} mist 
- * @param {*} site_id 
- * @param {*} date 
+ * @param {String} site_id 
+ * @param {Number} date 
  * @param {*} rogues_collection 
  */
 function _processSites(mist, site_id, date, rogues_collection) {
@@ -157,6 +176,25 @@ function _processSites(mist, site_id, date, rogues_collection) {
         })
     })
 }
+/**
+ * Delete Rogues that are not seen for more than 30 days
+ * @param {Number} date 
+ * @param {*} rogues_collection 
+ */
+function _cleanRogues(date, rogues_collection) {
+    var deadline = new Date().setDate(date.getDate() - global.config.history.max_age)
+    rogues_collection
+        .find({ last_seen: { $lt: deadline } })
+        .exec((err, rogues) => {
+            if (err) console.log(err)
+            else if (rogues.length > 0) {
+                rogues.forEach(rogue => {
+                    rogue.remove();
+                })
+            }
+        })
+}
+
 
 /**
  * Allows one to query the collection of user groups given query parameters as input
@@ -176,17 +214,24 @@ function _refreshRogues(mist, date, site_ids = [], all_sites = false) {
             } else if (sites) {
                 sites.forEach(site => {
                     _processSites(mist, site["id"], date, rogues_collection);
+                    _updateRoguesNotSeen(rogues_collection, site["id"], date);
                 })
             }
         })
     } else if (site_ids.length > 0) {
-        site_ids.forEach(site_id => _processSites(mist, site_id, date, rogues_collection));
+        site_ids.forEach(site_id => {
+            _processSites(mist, site_id, date, rogues_collection)
+            _updateRoguesNotSeen(rogues_collection, site_id, date);
+        });
     }
+    _cleanRogues(date, rogues_collection)
 }
 
-module.exports.new_turn = function(hour) {
-    const date = Date.now()
-    console.log(hour)
+
+
+module.exports.run = function(hour) {
+    const date = new Date()
+    console.log(date)
         // TODO: 
         //Accounts.find({ update_hour: hour, disabled: false })
     Accounts.find({ disabled: false })

@@ -45,6 +45,41 @@ router.get("/account/:org_id", (req, res) => {
     })
 });
 
+function checkRogue(rogue_types, rogue, datasets, data, date) {
+    // If the AP has been seen during last check
+    // add it on the list
+    data.rogues.push({
+            site_id: rogue.site_id,
+            bssid: rogue.bssid,
+            ssid: rogue.ssid[rogue.ssid.length - 1].value,
+            channel: rogue.channel[rogue.channel.length - 1].value,
+            avg_rssi: rogue.avg_rssi[rogue.avg_rssi.length - 1].value,
+            duration: date - rogue.first_seen,
+            first_seen: rogue.first_seen,
+            last_seen: rogue.last_seen,
+            rogue_type: rogue.rogue_type
+        })
+        // add the AP to the AP count per days
+    rogue_types.forEach(rogue_type => {
+        if (rogue.rogue_type[rogue_type]) {
+            // test to remove the rogues from the "others" category
+            if (rogue_type != "others" || (!rogue.rogue_type["lan"] && !rogue.rogue_type["honeypot"] && !rogue.rogue_type["spoof"])) {
+                delta_done = [];
+                rogue.avg_rssi.forEach(rssi => {
+                    // How many days in the past was the ts
+                    var delta = date - rssi.ts;
+                    var delta_days = parseInt(delta / (3600 * 24 * 1000));
+                    if (!delta_done.includes(delta_days)) {
+                        // add +1 to (last entry - delta_days)                
+                        datasets[rogue_type][30 - delta_days] = datasets[rogue_type][30 - delta_days] + 1;
+                        delta_done.push(delta_days)
+                    }
+                })
+            }
+        }
+    })
+}
+
 router.get("/stats/:org_id", (req, res) => {
     rbac.check_org_access(req, res, (err, req) => {
         if (err) err.send()
@@ -60,7 +95,6 @@ router.get("/stats/:org_id", (req, res) => {
                             .exec((err, rogues) => {
                                 if (err) { res.status(500).json(err) } else if (rogues) {
                                     const rogue_types = ["lan", "honeypot", "spoof", "others"];
-                                    const dates_array = ["now_minus_7d", "now_minus_6d", "now_minus_5d", "now_minus_4d", "now_minus_3d", "now_minus_2d", "now_minus_1d"]
                                     const colors = { "lan": "#0097a5", "honeypot": "#85b332", "spoof": "#e46b00", "others": "#aaaaaa" }
 
                                     const date = new Date();
@@ -85,47 +119,7 @@ router.get("/stats/:org_id", (req, res) => {
                                     }
 
                                     rogues.forEach(rogue => {
-                                        // If the AP has been seen during last check
-                                        if (rogue.last_seen > new Date().setDate(date.getDate() - 1)) {
-                                            // add it on the list
-                                            data.rogues.push({
-                                                site_id: rogue.site_id,
-                                                ssid: rogue.ssid,
-                                                bssid: rogue.bssid,
-                                                channel: rogue.channel,
-                                                avg_rssi: rogue.avg_rssi,
-                                                duration: date - rogue.first_seen,
-                                                first_seen: rogue.first_seen,
-                                                last_seen: rogue.last_seen,
-                                                rogue_type: rogue.rogue_type
-                                            })
-                                            rogue_types.forEach(rogue_type => {
-                                                if (rogue.rogue_type[rogue_type]) {
-                                                    // test to remove the rogues from the "others" category
-                                                    if (rogue_type != "others" || (!rogue.rogue_type["lan"] && !rogue.rogue_type["honeypot"] && !rogue.rogue_type["spoof"])) {
-                                                        datasets[rogue_type][datasets[rogue_type].length - 1] = datasets[rogue_type][datasets[rogue_type].length - 1] + 1;
-                                                    }
-                                                }
-                                            })
-                                        }
-
-                                        // for all the APs (even the APs not seen during the last check) add the AP in the last days counters
-                                        rogue_types.forEach(rogue_type => {
-                                            if (rogue.rogue_type[rogue_type]) {
-                                                // test to remove the rogues from the "others" category
-                                                if (rogue_type != "others" || (!rogue.rogue_type["lan"] && !rogue.rogue_type["honeypot"] && !rogue.rogue_type["spoof"])) {
-                                                    for (var e = 0; e < 30; e++) {
-                                                        var d = data.labels[e]
-                                                        if (rogue.first_seen < d && (rogue.last_seen > d || rogue.last_seen == account.last_rogue_process)) {
-                                                            if (!rogue.rogue_type["lan"] && !rogue.rogue_type["honeypot"] && !rogue.rogue_type["spoof"]) {
-                                                                if (i < 30) console.log(new Date(rogue))
-                                                            }
-                                                            datasets[rogue_type][e] = datasets[rogue_type][e] + 1;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        })
+                                        checkRogue(rogue_types, rogue, datasets, data, date);
                                     })
 
                                     // put all the data into the response dict

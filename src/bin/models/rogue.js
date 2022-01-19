@@ -9,37 +9,23 @@ function dynamicSchema(org_id) {
             spoof: { type: Boolean, default: false },
             others: { type: Boolean, default: false },
         },
-        ssid: { type: String, required: false },
+        //ap_mac: { type: String, required: false },
         bssid: { type: String, required: true },
-        channel: { type: Number, required: true },
-        avg_rssi: { type: Number, required: true },
-        num_aps: { type: Number, required: true },
-        delta_x: { type: Number, required: false },
-        delta_y: { type: Number, required: false },
+        ssid: [{ ts: Number, value: String }],
+        channel: [{ ts: Number, value: Number }],
+        avg_rssi: [{ ts: Number, value: Number }],
+        num_aps: [{ ts: Number, value: Number }],
+        delta_x: [{ ts: Number, value: Number }],
+        delta_y: [{ ts: Number, value: Number }],
         first_seen: { type: Number, required: true },
         last_seen: { type: Number, required: true },
-        last_updated: { type: Number, required: true },
-        email_sent: { type: Number, required: false, default: 0 },
-        history: [{
-            from: { type: Number, required: true },
-            to: { type: Number, required: true },
-            rogue_type: {
-                lan: { type: Boolean, default: false },
-                honeypot: { type: Boolean, default: false },
-                spoof: { type: Boolean, default: false },
-                others: { type: Boolean, default: false },
-            },
-            ssid: { type: String, required: false },
-            channel: { type: Number, required: false },
-            avg_rssi: { type: Number, required: false },
-            num_aps: { type: Number, required: false },
-            delta_x: { type: Number, required: false },
-            delta_y: { type: Number, required: false }
-        }]
+        created_at: { type: Number, required: true },
+        updated_at: { type: Number, required: true },
+        email_sent: { type: Number, required: false, default: 0 }
     });
     if (global.config.mongo.encKey && global.config.mongo.sigKey) {
         const encrypt = require('mongoose-encryption');
-        RogueSchema.plugin(encrypt, { encryptionKey: global.config.mongo.encKey, signingKey: global.config.mongo.sigKey, excludeFromEncryption: ['site_id', 'bssid', 'email_sent', 'first_seen', 'last_seen', 'last_updated', 'missed_checks'] });
+        RogueSchema.plugin(encrypt, { encryptionKey: global.config.mongo.encKey, signingKey: global.config.mongo.sigKey, excludeFromEncryption: ['site_id', 'bssid', 'email_sent', 'first_seen', 'last_seen', 'created_at', 'updated_at', 'missed_checks'] });
     }
     return mongoose.model('org.' + org_id, RogueSchema);
 }
