@@ -3,7 +3,7 @@
     "version": "0.0.0",
     "scripts": {
         "ng": "ng",
-        "start": "ng serve",
+        "start": "ng serve --proxy-config ./proxy.conf.json",
         "build": "ng build",
         "watch": "ng build --watch --configuration development",
         "test": "ng test"
@@ -20,7 +20,6 @@
         "@angular/platform-browser": "~12.0.3",
         "@angular/platform-browser-dynamic": "~12.0.3",
         "@angular/router": "~12.0.3",
-        "angular-highcharts": "^12.0.0",
         "chart.js": "^2.9.3",
         "ng2-charts": "^2.4.2",
         "rxjs": "~6.6.0",
