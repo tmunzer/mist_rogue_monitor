@@ -48,6 +48,7 @@ export class ConfigurationComponent {
     alert: {
       configured: false,
       enabled: false,
+      neighbors: false,
       to_emails: Array(),
       min_age: 1
     }

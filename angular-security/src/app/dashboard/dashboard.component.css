@@ -9,9 +9,10 @@
     align-items: stretch;
     margin: 1em 0;
     padding: 1em;
-    width: 15em;
+    width: 23%;
     border: 1px solid #d1d1d1;
     cursor: pointer;
+    padding: .5em;
 }
 
 .dashboard-content {
@@ -75,6 +76,10 @@ tr.mat-footer-row {
 
 .mat-cell {
     font-size: small;
+}
+
+.not_active {
+    color: gray !important;
 }
 
 .table-rogue {

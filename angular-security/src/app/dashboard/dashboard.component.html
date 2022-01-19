@@ -3,8 +3,10 @@
     <mat-card fxLayout="column" class="rogue-card" (click)="toggle_visibility(count.rogue_type)" [ngClass]="{'visible': count.display == true, 'not-visible' : count.display == false }" [style.border-color]="count.color">
         <mat-card-content fxLayout="column">
             <div fxLayout="row" fxLayoutAlign="space-between">
-                <span>{{count.title | uppercase}} <div style="height: 0.15em; width: 10em;"
-                        [style.background-color]="count.color"></div></span>
+                <div fxLayout="column">
+                    <span>{{count.title | uppercase}}</span>
+                    <span style="font-size: smaller;">Currently Active</span>
+                </div>
                 <span class="material-icons" *ngIf="count.display" style="color: black;">
                     visibility
                 </span>
@@ -12,6 +14,7 @@
                     visibility_off
                 </span>
             </div>
+            <div style="height: 0.15em; width: 10em;" [style.background-color]="count.color"></div>
             <div class="current-count" [ngClass]="{'no-rogues': count.rogue_type != 'others' && count.stats.now == 0, 'rogues' : count.rogue_type != 'others' && count.stats.now > 0 }">
                 {{count.stats.now}}
                 <span class="material-icons" *ngIf="count.rogue_type != 'others' && count.stats.now > 0">
@@ -40,20 +43,27 @@
     <!-- NAV  -->
     <div fxLayout="row" fxLayoutAlign="flex-end center" class="nav">
         <div fxLayout="row" fxLayoutAlign="start">
-            <div fxLayout="row" fxLayoutAlign="center center" style="margin: 0 2em;">
-                <span style="font-weight: 100; margin-right: .5em;">Last Sync:</span>
-                <span>{{account.last_rogue_process | date:'short'}}</span>
+            <div fxLayout="column">
+                <div fxLayout="row" fxLayoutAlign="center center" style="margin: 0 2em;">
+                    <span style="font-weight: 100; margin-right: .5em;">Last Sync:</span>
+                    <span>{{account.last_rogue_process | date:'short'}}</span>
+                </div>
+                <div fxLayout="row" fxLayoutAlign="center center" style="margin: 0 2em;">
+                    <span style="font-weight: 100; margin-right: .5em;">Next Sync:</span>
+                    <span>{{account.last_rogue_process | nextday | date:'short'}}</span>
+                </div>
+
             </div>
             <app-nav current="dashboard"></app-nav>
         </div>
         <div style="margin: 1em;" fxLayout="column">
-            <button mat-raised-button color="accent" (click)='back_to_orgs()'>Back to Orgs</button>
+            <button mat-stroked-button color="accent" (click)='back_to_orgs()'>Back to Orgs</button>
         </div>
     </div>
     <!-- MAIN  -->
     <div fxLayout="column" fxLayoutAlign="stretch" style="margin-top: 0em; width: 100%; height: 100%;">
-        <div fxLayout="row">
-            <div fxLayout="column">
+        <div fxLayout="row" fxLayoutAlign="space-between">
+            <div fxLayout="column" style="width: 50%;">
                 <div fxLayout="row" fxLayoutAlign="space-between center" style="padding: 0 16px;">
                     <ng-template *ngTemplateOutlet="tplCount; context: {$implicit:{title:'lan', rogue_type: 'lan', stats: stats.lan, display: display.lan, color: colors.lan}}">
                     </ng-template>
@@ -66,7 +76,7 @@
                 </div>
                 <!-- Line Chart -->
 
-                <mat-card class="dashboard-content chart" style="height: 12em; position: relative; display: block;">
+                <mat-card class="dashboard-content chart" style="height: 12em; position: relative; display: block; margin-top: .54em">
                     <canvas baseChart style="height: 100%;" [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions" [legend]="lineChartLegend" chartType="line">
                     </canvas>
                 </mat-card>
@@ -85,7 +95,7 @@
                     <mat-form-field appearance="standard" style="width: 44%; padding: 0 1.2em;">
                         <mat-label>Site</mat-label>
                         <input type="text" matInput (keyup)="update_filter_sites()" [(ngModel)]="filter_site" [matAutocomplete]="auto">
-                        <button *ngIf="filter_site" matSuffix mat-icon-button aria-label="Clear" (click)="filter_site=''">
+                        <button *ngIf="filter_site" matSuffix mat-icon-button aria-label="Clear" (click)="clear_filter_site()">
                       <mat-icon>close</mat-icon>
                     </button>
                         <mat-autocomplete #auto="matAutocomplete" [displayWith]="display_site_autocomplete" style="width: 20em !important;" (closed)="apply_filter()">
@@ -98,7 +108,7 @@
                     <mat-form-field appearance="standard" style="width: 48%; padding: 0 1.2em;">
                         <mat-label>SSID</mat-label>
                         <input matInput (keyup)="apply_filter()" placeholder="Ex. Wlan" #input [(ngModel)]="filter_ssid">
-                        <button *ngIf="filter_ssid" matSuffix mat-icon-button aria-label="Clear" (click)="filter_ssid=''">
+                        <button *ngIf="filter_ssid" matSuffix mat-icon-button aria-label="Clear" (click)="clear_filter_ssid()">
                       <mat-icon>close</mat-icon>
                     </button>
                     </mat-form-field>
@@ -106,14 +116,20 @@
                     <mat-form-field appearance="standard" style="width: 20%; padding: 0 1em;">
                         <mat-label>BSSID</mat-label>
                         <input matInput (keyup)="apply_filter()" placeholder="Ex. Wlan" #input [(ngModel)]="filter_bssid">
-                        <button *ngIf="filter_bssid" matSuffix mat-icon-button aria-label="Clear" (click)="filter_bssid=''">
+                        <button *ngIf="filter_bssid" matSuffix mat-icon-button aria-label="Clear" (click)="clear_filter_bssid()">
                       <mat-icon>close</mat-icon>
                     </button>
                     </mat-form-field>
 
                 </div>
-                <mat-paginator #paginator [pageIndex]="pageIndex" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" aria-label="Select page">
-                </mat-paginator>
+                <div fxLayout="row" fxLayoutAlign="center center">
+                    <mat-slide-toggle [(ngModel)]="showInactive" (change)="apply_filter()" style="margin-bottom: .5em;">Show Inactive APs
+                    </mat-slide-toggle>
+                </div>
+                <div fxLayout="row" fxLayoutAlign="center center">
+                    <mat-paginator #paginator [pageIndex]="pageIndex" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" aria-label="Select page">
+                    </mat-paginator>
+                </div>
             </div>
             <div class="table-container">
                 <table mat-table [dataSource]="rogueDataSource" matSort>
@@ -124,38 +140,47 @@
                     <!-- SSID Column -->
                     <ng-container matColumnDef="ssid">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 26%;"> SSID </th>
-                        <td mat-cell *matCellDef="let element"> {{element.ssid}} </td>
+                        <td mat-cell *matCellDef="let element" [ngClass]="{'not_active': element.last_seen==0}"> {{element.ssid}} </td>
                     </ng-container>
 
                     <!-- BSSID Column -->
                     <ng-container matColumnDef="bssid">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 10%;"> BSSID </th>
-                        <td mat-cell *matCellDef="let element"> {{element.bssid}} </td>
+                        <td mat-cell *matCellDef="let element" [ngClass]="{'not_active': element.last_seen==0}"> {{element.bssid}} </td>
                     </ng-container>
 
                     <!-- LAN Column -->
                     <ng-container matColumnDef="lan">
-                        <th mat-header-cell *matHeaderCellDef style="text-align: center;" style="width: 6%; text-align: center;"> LAN </th>
+                        <th mat-header-cell *matHeaderCellDef style="text-align: center;" style="width: 6%; text-align: center;">
+                            LAN
+                            <span class="material-icons" style="font-size: medium;" matTooltip="Not Authorized APs detected on the LAN" matTooltipHideDelay="100"> help_outline </span>
+                        </th>
                         <td mat-cell *matCellDef="let element">
-                            <span class="material-icons table-rogue" *ngIf="element.rogue_type.lan">
+                            <span class="material-icons table-rogue" *ngIf="element.rogue_type.lan" [ngClass]="{'not_active': element.last_seen==0}">
                                 warning
                             </span>
                         </td>
                     </ng-container>
                     <!-- HONEYPOT Column -->
                     <ng-container matColumnDef="honeypot">
-                        <th mat-header-cell *matHeaderCellDef style="text-align: center;" style="width: 6%; text-align: center;"> HONEYPOT </th>
+                        <th mat-header-cell *matHeaderCellDef style="text-align: center;" style="width: 6%; text-align: center;">
+                            HONEYPOT
+                            <span class="material-icons" style="font-size: medium;" matTooltip="Not Authorized APs broadcasting your SSID" matTooltipHideDelay="100"> help_outline </span>
+                        </th>
                         <td mat-cell *matCellDef="let element">
-                            <span class="material-icons table-rogue" *ngIf="element.rogue_type.honeypot">
+                            <span class="material-icons table-rogue" *ngIf="element.rogue_type.honeypot" [ngClass]="{'not_active': element.last_seen==0}">
                                 warning
                             </span>
                         </td>
                     </ng-container>
                     <!-- SPOOF Column -->
                     <ng-container matColumnDef="spoof">
-                        <th mat-header-cell *matHeaderCellDef style="text-align: center;" style="width: 6%; text-align: center;"> SPOOF </th>
+                        <th mat-header-cell *matHeaderCellDef style="text-align: center;" style="width: 6%; text-align: center;">
+                            SPOOF
+                            <span class="material-icons" style="font-size: medium;" matTooltip="Not Authorized APs using one of your BSSIDs" matTooltipHideDelay="100"> help_outline </span>
+                        </th>
                         <td mat-cell *matCellDef="let element">
-                            <span class="material-icons table-rogue" *ngIf="element.rogue_type.spoof">
+                            <span class="material-icons table-rogue" *ngIf="element.rogue_type.spoof" [ngClass]="{'not_active': element.last_seen==0}">
                                 warning
                             </span>
                         </td>
@@ -163,13 +188,13 @@
                     <!-- FIRST SEEN Column -->
                     <ng-container matColumnDef="first_seen">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 20%;"> FIRST SEEN </th>
-                        <td mat-cell *matCellDef="let element">
+                        <td mat-cell *matCellDef="let element" [ngClass]="{'not_active': element.last_seen==0}">
                             <span *ngIf="element.duration < 3600000">Less than 1 hour ago</span>
                             <span *ngIf="element.duration >= 3600000 && element.duration < 7200000 ">1 hour ago</span>
                             <span *ngIf="element.duration >= 7200000 && element.duration < 86400000 ">{{element.duration / (1000 * 3600) | number:'1.0-0'}} hours ago</span>
                             <span *ngIf="element.duration >= 86400000 && element.duration < 172800000">1 day ago</span>
-                            <span *ngIf="element.duration >= 172800000">{{(element.duration / 86400000) | number:'1.0-0'}} days ago</span>
-                            <span class="material-icons table-duration" *ngIf="element.duration> (account.min_age * 86400000) && (element.rogue_type.lan || element.rogue_type.honeypot || element.rogue_type.spoof)">
+                            <span *ngIf="element.duration >= 172800000 && element.first_seen > 0">{{(element.duration / 86400000) | number:'1.0-0'}} days ago</span>
+                            <span class="material-icons table-duration" *ngIf="element.first_seen > 0 && element.duration > (account.min_age * 86400000) && (element.rogue_type.lan || element.rogue_type.honeypot || element.rogue_type.spoof)">
                                 schedule
                             </span>
                         </td>
@@ -177,7 +202,7 @@
                     <!-- SITE Column -->
                     <ng-container matColumnDef="site_name">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 26%;"> SITE </th>
-                        <td mat-cell *matCellDef="let element"> {{element.site_name}} </td>
+                        <td mat-cell *matCellDef="let element" [ngClass]="{'not_active': element.last_seen==0}"> {{element.site_name}} </td>
                     </ng-container>
                     <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
                     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>

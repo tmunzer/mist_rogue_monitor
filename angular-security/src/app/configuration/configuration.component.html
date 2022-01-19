@@ -178,18 +178,21 @@
                 </mat-card-title>
                 <mat-card-subtitle></mat-card-subtitle>
                 <mat-card-content>
-                    <section>
-                        <mat-slide-toggle [(ngModel)]="config.alert.enabled">Enable Email Alerting
+                    <section fxLayout="column">
+                        <mat-slide-toggle [(ngModel)]="config.alert.enabled" style="margin-bottom: .5em;">Enable Email Alerting
+                        </mat-slide-toggle>
+                        <mat-slide-toggle [disabled]="config.alert.enabled==false" [(ngModel)]="config.alert.neighbors">Enable Email Alerting for Neighbors APs
                         </mat-slide-toggle>
                     </section>
                     <div style="justify-content: space-between; margin-top: 1em;" fxLayout="column" fxLayoutAlign="stretch">
 
                         <div fxLayout="row" style="width: 100%;" fxLayour="row" fxLayoutAlign="start center" [style.color]="config.alert.enabled? 'black':'gray'">
-                            <div>Send email when a Rogue AP is detected for more than </div>
+                            <div>Send email when a AP is detected for more than </div>
                             <input placeholder="" [(ngModel)]="config.alert.min_age" [disabled]="config.alert.enabled==false" type="number" min="0" style="padding: 5px;width: 3em;margin: 5px;">
                             <div *ngIf="config.alert.min_age <= 1">day</div>
                             <div *ngIf="config.alert.min_age > 1">days</div>
                         </div>
+                        <span [style.color]="config.alert.enabled? 'black':'gray'" style="font-size: smaller;"> (0 means email is sent just after the first sync where the AP is detected) </span>
 
                         <mat-form-field>
                             <mat-label>Alert Emails Recipients</mat-label>

@@ -21,13 +21,14 @@ export interface Org {
 
 export interface RogueElement {
   site_id: string,
-  site_name: string,
-  ssid: string,
   bssid: string,
+  site_name: string,
+  ssid: string, 
   channel: number,
   avg_rssi: number,
   duration: number,
   first_seen: number,
+  last_seend: number,
   rogue_type: {
     lan: boolean,
     honeypot: boolean,
@@ -83,6 +84,7 @@ export class DashboardComponent implements OnInit {
 
   /////////////////////////
   // table
+  showInactive: boolean= false;
   displayedColumns: string[] = ['site_name', 'ssid', 'bssid', 'lan', 'honeypot', 'spoof', 'first_seen'];
   rogueDataSource: MatTableDataSource<RogueElement> = new MatTableDataSource();
   roguesDisplayed: RogueElement[] = [];
@@ -310,23 +312,18 @@ export class DashboardComponent implements OnInit {
   //////////////////////////////////////////////////////////////////////////////
   /////           TABLE
   //////////////////////////////////////////////////////////////////////////////
-  filter_table(): void {
-    this.roguesDisplayed = [];
-    this.stats.rogues.forEach(rogue => {
-      if (
-        (this.display["lan"] && rogue["rogue_type"]["lan"]) ||
-        (this.display["honeypot"] && rogue["rogue_type"]["honeypot"]) ||
-        (this.display["spoof"] && rogue["rogue_type"]["spoof"]) ||
-        (this.display["others"] && (!rogue["rogue_type"]["lan"] && !rogue["rogue_type"]["honeypot"] && !rogue["rogue_type"]["spoof"]))
-      ) {
-        this.roguesDisplayed.push(rogue);
-      }
-    })
-    this.rogueDataSource = new MatTableDataSource<RogueElement>(this.roguesDisplayed)
-    this.rogueDataSource.paginator = this.paginator;
-    this.rogueDataSource.sort = this.sort;
+  clear_filter_site(){
+    this.filter_site = "";
+    this.apply_filter()
   }
-
+  clear_filter_ssid(){
+    this.filter_ssid = "";
+    this.apply_filter()
+  }
+  clear_filter_bssid(){
+    this.filter_bssid = "";
+    this.apply_filter()
+  }
 
   update_filter_sites() {
     var tmp = [];
@@ -346,9 +343,16 @@ export class DashboardComponent implements OnInit {
     this.stats.rogues.forEach(rogue => {
       const rogue_element = (rogue as RogueElement);
       if (
-        (this.filter_site == "" || rogue_element.site_name.toLocaleLowerCase().includes(this.filter_site.toLocaleLowerCase())) &&
-        (this.filter_ssid == "" || rogue_element.ssid.toLocaleLowerCase().includes(this.filter_ssid.toLocaleLowerCase())) &&
-        (this.filter_bssid == "" || rogue_element.bssid.toLocaleLowerCase().includes(this.filter_bssid.toLocaleLowerCase()))
+         (this.showInactive || rogue_element.first_seen > 0)
+        && (
+          (this.display.lan && rogue_element.rogue_type.lan)
+          || (this.display.honeypot && rogue_element.rogue_type.honeypot)
+          || (this.display.spoof && rogue_element.rogue_type.spoof)
+          || (this.display.others && rogue_element.rogue_type.others)
+        )
+        && (this.filter_site == "" || rogue_element.site_name.toLocaleLowerCase().includes(this.filter_site.toLocaleLowerCase())) 
+        && (this.filter_ssid == "" || rogue_element.ssid.toLocaleLowerCase().includes(this.filter_ssid.toLocaleLowerCase())) 
+        && (this.filter_bssid == "" || rogue_element.bssid.toLocaleLowerCase().includes(this.filter_bssid.toLocaleLowerCase())) 
       )
         this.roguesDisplayed.push(rogue)
     })
@@ -392,7 +396,7 @@ export class DashboardComponent implements OnInit {
   refresh_display(): void {
     this.draw_line_chart();
     this.draw_scatter_chart();
-    this.filter_table();
+    this.apply_filter();
 
   }
 
