@@ -49,10 +49,9 @@ module.exports.smtp = {
     from_name: "Wi-Fi Access",
     from_email: "wi-fi@corp.org",
     subject: "Your Personal Wi-Fi access code",
-    logo_url: "https://cdn.mist.com/wp-content/uploads/logo.png",
-    enable_qrcode: true
+    logo_url: "https://cdn.mist.com/wp-content/uploads/logo.png"
 }
 
 module.exports.history = {
-    max_age: "365" // automatically remove aps not seen during the past year 
+    max_age: "30" // automatically remove aps not seen during the past year 
 }

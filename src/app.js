@@ -55,8 +55,7 @@ try {
             from_name: process.env.SMTP_FROM_NAME || "Wi-Fi Access",
             from_email: process.env.SMTP_FROM_EMAIL || "wi-fi@corp.org",
             subject: process.env.SMTP_SUBJECT || "Your Personal Wi-Fi access code",
-            logo_url: process.env.SMTP_LOGO || "https://cdn.mist.com/wp-content/uploads/logo.png",
-            enable_qrcode: stringToBool(process.env.SMTP_ENABLE_QRCODE, true)
+            logo_url: process.env.SMTP_LOGO || "https://cdn.mist.com/wp-content/uploads/logo.png"
         },
         history: {
             max_age: process.env.MAX_AGE || 365
@@ -109,9 +108,12 @@ mongoose.connect('mongodb://' + mongo_host + '/' + global.config.mongo.base + "?
  ================================================================*/
 const Rogue_Check = require("./bin/mist_rogue");
 const Mail = require("./bin/mail");
-cron.schedule('0 0 */6 * * *', function() {
-    Rogue_Check.new_turn("*")
-    Rogue_Check.new_turn(h)
+// TODO
+// put back to 24hrs
+cron.schedule('0 0 */1 * * *', function() {
+    console.log("new turn")
+    Rogue_Check.run("*")
+        //run.new_turn(h)
     Mail.run();
 });
 /*================================================================
