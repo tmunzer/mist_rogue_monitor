@@ -148,6 +148,7 @@ router.get('/config/:org_id', (req, res) => {
                     alert: {
                         configured: false,
                         enabled: false,
+                        neighbors: false,
                         to_emails: [],
                         min_age: 1
                     }
@@ -189,6 +190,7 @@ router.get('/config/:org_id', (req, res) => {
                         if (account._alert) {
                             data.config.alert.configured = account._alert.configured;
                             data.config.alert.enabled = account._alert.enabled;
+                            data.config.alert.neighbors = account._alert.neighbors;
                             data.config.alert.to_emails = account._alert.to_emails;
                             data.config.alert.min_age = account._alert.min_age;
                         }

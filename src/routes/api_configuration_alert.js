@@ -52,6 +52,7 @@ function saveNewAlert(req, res) {
         to_emails: req.body.to_emails,
         min_age: req.body.min_age,
         enabled: req.body.enabled,
+        neighbors: req.body.neighbors,
         configured: true
     };
 

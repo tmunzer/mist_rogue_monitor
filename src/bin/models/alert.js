@@ -4,6 +4,7 @@ const AlertSchema = new mongoose.Schema({
     to_emails: { type: [String], default: [] },
     min_age: { type: Number, required: false, default: 1 },
     enabled: { type: Boolean, default: false },
+    neighbors: { type: Boolean, default: false },
     configured: { type: Boolean, default: false }
 });
 
