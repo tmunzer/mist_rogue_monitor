@@ -41,6 +41,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 
+import { NextDayPipe } from './common/pipe/next_day'
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     ApitokenManualDialog,
     OrgSelectComponent,
     NavComponent,
+    NextDayPipe
   ],
   imports: [
     BrowserModule,
