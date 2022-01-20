@@ -36,7 +36,8 @@ export class ConfigurationComponent {
     sites: {
       site_ids: Array(),
       all_sites: false,
-      configured: false
+      configured: false,
+      sync_time: {hour: 0, minute: 0}
     },
     token: {
       configured: false,
@@ -84,6 +85,7 @@ export class ConfigurationComponent {
     this._activeroute.params.subscribe(params => {
       this.org_id = params.org_id;
     });
+    this.config.sites.sync_time = {hour: 13, minute: 30};
     this.get_config();
     this.get_sites();
   }

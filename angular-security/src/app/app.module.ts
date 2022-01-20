@@ -37,6 +37,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
+import { MatTimepickerModule } from 'mat-timepicker';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
@@ -81,6 +82,7 @@ import { NextDayPipe } from './common/pipe/next_day'
     MatSnackBarModule,
     MatSortModule,
     MatTableModule,
+    MatTimepickerModule,
     MatPaginatorModule,
     MatTooltipModule,
     MatToolbarModule,

@@ -34,7 +34,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <th>Monitored Sites:</th>
+                            <th>Sites Monitoring:</th>
                             <td>
                                 <div *ngIf="config.sites.configured" fxLayout="row">
                                     <div class="material-icons green">done</div>
@@ -106,8 +106,7 @@
             <mat-card>
                 <mat-card-title fxLayout="row" fxLayoutAlign="space-between center">
                     <div>
-
-                        Monitored Sites
+                        Sites Monitoring
                         <div *ngIf="config.sites.configured" class="material-icons green">done
                         </div>
                         <div *ngIf="!config.sites.configured" class="material-icons red">close
@@ -118,6 +117,17 @@
                 </mat-card-title>
                 <mat-card-subtitle>Select the sites you want to monitor.</mat-card-subtitle>
                 <mat-card-content>
+                    <section fxLayout="row">
+                        Sync Rogue list with the Mist Cloud every day at
+                        <mat-form-field appearance="fill">
+                            <mat-label>TIMEPICKER</mat-label>
+
+                            <!-- The timepicker input -->
+                            <input matTimepicker #t="matTimepicker" #time="ngModel" [strict]="false" id="timepicker-example" mode="24h" [ngModel]="config.sites.sync_time" name="time" (timeChange)="timeChangeHandler($event)" (invalidInput)="invalidInputHandler()">
+                            <!-- An icon for the timepicker input that will open the timepicker dialog when clicked -->
+                            <mat-icon matSuffix (click)="t.showDialog()">access_time</mat-icon>
+                        </mat-form-field>
+                    </section>
                     <section>
                         <mat-slide-toggle [(ngModel)]="config.sites.all_sites">Monitor all sites</mat-slide-toggle>
                     </section>
