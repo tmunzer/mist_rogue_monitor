@@ -13,7 +13,7 @@ module.exports.generate = function(mist, scope, callback) {
     if (scope == "org") {
         path = "/api/v1/orgs/" + mist.org_id + "/apitokens"
         data = {
-            "name": "mist_psk_portal_token",
+            "name": "mist_rogue_monitor_token",
             "privileges": [
                 { "scope": "org", "role": "write" }
             ]
