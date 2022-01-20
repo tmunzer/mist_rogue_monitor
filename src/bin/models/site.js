@@ -8,10 +8,7 @@ const SiteSchema = new mongoose.Schema({
 
 if (global.config.mongo.encKey && global.config.mongo.sigKey) {
     const encrypt = require('mongoose-encryption');
-    SiteSchema.plugin(encrypt, {
-        encryptionKey: global.config.mongo.encKey,
-        signingKey: global.config.mongo.sigKe
-    });
+    SiteSchema.plugin(encrypt, { encryptionKey: global.config.mongo.encKey, signingKey: global.config.mongo.sigKey });
 }
 
 const Site = mongoose.model('Site', SiteSchema);
