@@ -21,8 +21,8 @@
         "@angular/platform-browser-dynamic": "~12.0.3",
         "@angular/router": "~12.0.3",
         "chart.js": ">=2.9.4",
-        "mat-timepicker": "^5.1.4",
         "ng2-charts": "^2.4.2",
+        "ngx-mat-timepicker": "^12.1.0",
         "rxjs": "~6.6.0",
         "tslib": "^2.1.0",
         "zone.js": "~0.11.4"

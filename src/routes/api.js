@@ -134,6 +134,7 @@ router.get('/config/:org_id', (req, res) => {
                 privilege: req.session.mist.privilege,
                 account_created: false,
                 config: {
+                    sync_time_utc: {},
                     sites: {
                         all_sites: false,
                         site_ids: [],
@@ -166,6 +167,7 @@ router.get('/config/:org_id', (req, res) => {
                     else {
                         req.session.account_id = account._id;
                         data.account_created = true;
+                        data.config.sync_time_utc = account.sync_time_utc;
                         // site
                         if (account._site) {
                             data.config.sites.configured = account._site.configured;

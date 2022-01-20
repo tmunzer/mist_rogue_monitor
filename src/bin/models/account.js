@@ -6,7 +6,10 @@ const AccountSchema = new mongoose.Schema({
     org_name: { type: String, required: true },
     last_rogue_process: { type: Number, required: false },
     disabled: { type: Boolean, default: false },
-    update_hour: { type: String },
+    sync_time_utc: {
+        hours: { type: Number },
+        minutes: { type: Number }
+    },
     _token: { type: mongoose.Schema.ObjectId, ref: "Token" },
     _site: { type: mongoose.Schema.ObjectId, ref: "Site" },
     _alert: { type: mongoose.Schema.ObjectId, ref: "Alert" }

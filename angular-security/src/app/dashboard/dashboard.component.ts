@@ -113,6 +113,7 @@ export class DashboardComponent implements OnInit {
     others: false
   }
 
+  
   stats = {
     lan: { now: 0, last_week: 0 },
     honeypot: { now: 0, last_week: 0 },
@@ -155,13 +156,17 @@ export class DashboardComponent implements OnInit {
       }
     ]
   }
-
+  
   account = {
     last_rogue_process: 0,
     errors: 0,
     disabled: 0,
     configured: false,
-    min_age: 1
+    min_age: 1,
+    sync_time_utc: {
+      hours: 0,
+      minutes: 0
+    }
   }
 
   box_opened: Boolean = false;
@@ -205,7 +210,7 @@ export class DashboardComponent implements OnInit {
   /////           ACCOUNT
   //////////////////////////////////////////////////////////////////////////////
   parse_account(data: any): void {
-    this.account = data
+    this.account = data;
   }
   getAccount(): void {
     this.is_working = true;

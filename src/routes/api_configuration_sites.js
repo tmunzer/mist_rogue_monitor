@@ -49,10 +49,11 @@ function updateSite(account, new_site, cb) {
 
 function saveNewSite(req, res) {
     new_site = {
-        all_sites: req.body.all_sites,
-        site_ids: req.body.site_ids,
+        all_sites: req.body.sites.all_sites,
+        site_ids: req.body.sites.site_ids,
         configured: true
     };
+    var sync_time_utc = req.body.sync_time_utc;
 
     //try to find the account in the DB
     Account.findOne({
@@ -64,13 +65,17 @@ function saveNewSite(req, res) {
             if (err) {
                 console.error(err)
                 res.status(500).send(err)
-                    // if the account already exists, create or update the Site
+                    // if the account already exists, update the sync_time and create or update the Site
             } else if (account) {
-                // if the account already has a Site, update it
-                if (account._site) updateSite(account, new_site, (status, data) => res.status(status).json(data))
+                account.sync_time_utc = sync_time_utc;
+                account.save((err, account) => {
+                    if (err) console.log(err)
+                        // if the account already has a Site, update it
+                    else if (account._site) updateSite(account, new_site, (status, data) => res.status(status).json({ sync_time_utc: sync_time_utc, sites: data }));
                     // otherwise, create the Site entry in the DB for the account
-                else createSite(account, new_site, (status, data) => res.status(status).json(data))
+                    else createSite(account, new_site, (status, data) => res.status(status).json({ sync_time_utc: sync_time_utc, sites: data }));
                     // if the account does not exists, create the account and the Site                    
+                })
             } else {
                 res.status(500).json({ "error": "Account not found..." })
             }

@@ -230,11 +230,13 @@ function _refreshRogues(mist, date, site_ids = [], all_sites = false) {
 
 
 module.exports.run = function(hour) {
-    const date = new Date()
+    const date = new Date();
     console.log(date)
-        // TODO: 
-        //Accounts.find({ update_hour: hour, disabled: false })
-    Accounts.find({ disabled: false })
+    var hours = date.getUTCHours();
+    var minutes = date.getUTCMinutes();
+    // TODO: 
+    //Accounts.find({ update_hour: hour, disabled: false })
+    Accounts.find({ disabled: false, sync_time_utc: { hours: hours, minutes: minutes } })
         .populate("_token")
         .populate("_site")
         .exec((err, accounts) => {

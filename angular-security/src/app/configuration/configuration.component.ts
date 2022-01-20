@@ -1,6 +1,6 @@
-import { Component} from '@angular/core';
+import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Router, ActivatedRoute} from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApitokenManualDialog } from './configuration.token.manual';
@@ -8,8 +8,8 @@ import { ApitokenManualDialog } from './configuration.token.manual';
 import { ErrorDialog } from './../common/error'
 import { ConfirmDialog } from './configuration.confirm';
 
-import {COMMA, ENTER, SPACE} from '@angular/cdk/keycodes';
-import {MatChipInputEvent} from '@angular/material/chips';
+import { COMMA, ENTER, SPACE } from '@angular/cdk/keycodes';
+import { MatChipInputEvent } from '@angular/material/chips';
 
 
 export interface Site {
@@ -33,11 +33,15 @@ export class ConfigurationComponent {
   account_created: boolean = false;
   //CONFIG
   config = {
+    sync_time: "",
+    sync_time_utc: {
+      hours: -1,
+      minutes: -1
+    },
     sites: {
       site_ids: Array(),
       all_sites: false,
-      configured: false,
-      sync_time: {hour: 0, minute: 0}
+      configured: false
     },
     token: {
       configured: false,
@@ -78,14 +82,13 @@ export class ConfigurationComponent {
   is_working_config = false;
   is_working_sites = false;
 
-
   test: boolean = false;
 
   ngOnInit(): void {
     this._activeroute.params.subscribe(params => {
       this.org_id = params.org_id;
     });
-    this.config.sites.sync_time = {hour: 13, minute: 30};
+    //this.config.sites.sync_time = "0";
     this.get_config();
     this.get_sites();
   }
@@ -114,18 +117,67 @@ export class ConfigurationComponent {
   //////////////////////////////////////////////////////////////////////////////
   /////           CONFIG
   //////////////////////////////////////////////////////////////////////////////
+  set_default_sync_time(): void {
+    if (!this.config.sync_time) {
+      var sync_time = new Date();
+      var min = sync_time.getMinutes()
+      var tmp = parseInt((min / 10).toFixed()) * 10
+      if ((min / 5) % 2 < 1) {
+        min = tmp + 5
+      } else {
+        min = tmp 
+      }
+      if (min < 60) {
+        sync_time.setMinutes(min);
+      } else {
+        sync_time.setHours(sync_time.getHours() + 1)
+        sync_time.setMinutes(min - 60)
+      }
+      this.config.sync_time = sync_time.getHours() + ":" + sync_time.getMinutes();
+      this.config.sync_time_utc = {
+        hours: sync_time.getUTCHours(),
+        minutes: sync_time.getUTCMinutes()
+      }
+    }
+  }
+
+  set_sync_time_from_utc() {
+    var hours = this.config.sync_time_utc.hours
+    var minutes = this.config.sync_time_utc.minutes
+    var sync_time = new Date()
+    sync_time.setUTCHours(parseInt(hours.toString()))
+    sync_time.setUTCMinutes(parseInt(minutes.toString()))
+    var res = sync_time.getHours() + ":" + sync_time.getMinutes();
+    this.config.sync_time = res;
+
+  }
+
+  get_sync_time_to_utc(): any {
+    var hours = this.config.sync_time.split(":")[0]
+    var minutes = this.config.sync_time.split(":")[1]
+    var sync_time_utc = new Date()
+    sync_time_utc.setHours(parseInt(hours))
+    sync_time_utc.setMinutes(parseInt(minutes))
+    var res = {hours: sync_time_utc.getUTCHours(), minutes: sync_time_utc.getUTCMinutes()}
+    return res
+  }
 
   parse_config_response(data: any): void {
     if (data.account_created) this.account_created = data.account_created;
     if (data.privilege) this.privilege = data.privilege;
     if (data.config) this.config = data.config;
+    if ("hours" in this.config.sync_time_utc && "minutes" in this.config.sync_time_utc) {
+      this.set_sync_time_from_utc();
+    } else {
+      this.set_default_sync_time();
+    }
     this.set_site_lists();
   }
 
 
   get_config(): void {
     this.toggle_is_working("config", true)
-    this._http.get<any>('/api/config/'+this.org_id).subscribe({
+    this._http.get<any>('/api/config/' + this.org_id).subscribe({
       next: data => {
         this.parse_config_response(data);
         this.toggle_is_working("config", false)
@@ -165,7 +217,7 @@ export class ConfigurationComponent {
 
   get_sites(): void {
     this.toggle_is_working("sites", true)
-    this._http.get<Site[]>('/api/sites/'+this.org_id).subscribe({
+    this._http.get<Site[]>('/api/sites/' + this.org_id).subscribe({
       next: data => {
         this.parse_sites_response(data);
         this.toggle_is_working("sites", false)
@@ -192,7 +244,6 @@ export class ConfigurationComponent {
         tmp_sites_filtered.push(site)
       }
     })
-    console.log(event)
   }
 
   select_site(site: Site, list: String) {
@@ -261,9 +312,12 @@ export class ConfigurationComponent {
       })
     }
     this.config.sites.configured = true;
-    this._http.post<any>('/api/config/sites/'+this.org_id, this.config.sites).subscribe({
+    this.config.sync_time_utc = this.get_sync_time_to_utc();
+    this._http.post<any>('/api/config/sites/' + this.org_id, {sync_time_utc: this.config.sync_time_utc, sites: this.config.sites}).subscribe({
       next: data => {
-        this.config.sites = data;
+        this.config.sites = data.sites;
+        this.config.sync_time_utc = data.sync_time_utc;
+        this.set_sync_time_from_utc();
         this.open_snack_bar("Monitored sites configured.", "Ok")
       },
       error: error => {
@@ -281,7 +335,7 @@ export class ConfigurationComponent {
     dialogRef.afterClosed().subscribe(result => {
       this.is_working = true
       if (result) {
-        this._http.delete("/api/account/"+this.org_id).subscribe({
+        this._http.delete("/api/account/" + this.org_id).subscribe({
           next: data => {
             this.is_working = false
             this.open_snack_bar("Account deleted.", "Ok")
@@ -302,7 +356,7 @@ export class ConfigurationComponent {
     this.config.token.configured = false;
     this.config.token.auto_mode = true;
     this.is_working = true;
-    this._http.post<any>('/api/config/token/'+this.org_id, { scope: scope }).subscribe({
+    this._http.post<any>('/api/config/token/' + this.org_id, { scope: scope }).subscribe({
       next: data => {
         this.config.token.configured = true;
         this.config.token.auto_mode = true;
@@ -321,7 +375,7 @@ export class ConfigurationComponent {
     this.config.token.configured = false;
     this.config.token.auto_mode = true;
     this.is_working = true;
-    this._http.post<any>('/api/config/token/'+this.org_id, { apitoken: apitoken }).subscribe({
+    this._http.post<any>('/api/config/token/' + this.org_id, { apitoken: apitoken }).subscribe({
       next: data => {
         this.config.token.configured = true;
         this.config.token.auto_mode = false;
@@ -340,7 +394,7 @@ export class ConfigurationComponent {
     dialogRef.afterClosed().subscribe(result => {
       this.is_working = true
       if (result) {
-        this._http.delete("/api/config/token/"+this.org_id).subscribe({
+        this._http.delete("/api/config/token/" + this.org_id).subscribe({
           next: data => {
             this.is_working = false
             this.config.token.configured = false;
@@ -377,8 +431,8 @@ export class ConfigurationComponent {
     }
   }
 
-  save_alert():void {
-    this._http.post<any>('/api/config/alerts/'+this.org_id, this.config.alert).subscribe({
+  save_alert(): void {
+    this._http.post<any>('/api/config/alerts/' + this.org_id, this.config.alert).subscribe({
       next: data => {
         this.config.alert = data;
         this.open_snack_bar("Email Alert configured.", "Ok")
@@ -418,7 +472,7 @@ export class ConfigurationComponent {
   //////////////////////////////////////////////////////////////////////////////
   /////           BCK TO ORGS
   //////////////////////////////////////////////////////////////////////////////
-  back_to_orgs():void {
+  back_to_orgs(): void {
     this._router.navigate(["/orgs"])
   }
 }

@@ -14,7 +14,7 @@
                     visibility_off
                 </span>
             </div>
-            <div style="height: 0.15em; width: 10em;" [style.background-color]="count.color"></div>
+            <div style="height: 0.15em; width: 100%;" [style.background-color]="count.color"></div>
             <div class="current-count" [ngClass]="{'no-rogues': count.rogue_type != 'others' && count.stats.now == 0, 'rogues' : count.rogue_type != 'others' && count.stats.now > 0 }">
                 {{count.stats.now}}
                 <span class="material-icons" *ngIf="count.rogue_type != 'others' && count.stats.now > 0">
@@ -50,7 +50,7 @@
                 </div>
                 <div fxLayout="row" fxLayoutAlign="center center" style="margin: 0 2em;">
                     <span style="font-weight: 100; margin-right: .5em;">Next Sync:</span>
-                    <span>{{account.last_rogue_process | nextday | date:'short'}}</span>
+                    <span>{{account | nextday | date:'short'}}</span>
                 </div>
 
             </div>

@@ -35,6 +35,7 @@ router.get("/account/:org_id", (req, res) => {
                             errors: account.errors,
                             disabled: account.disabled,
                             configured: configured,
+                            sync_time_utc: account.sync_time_utc,
                             min_age: 1
                         }
                         if (account._alert) data.min_age = account._alert.min_age

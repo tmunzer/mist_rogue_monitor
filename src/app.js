@@ -110,7 +110,7 @@ const Rogue_Check = require("./bin/mist_rogue");
 const Mail = require("./bin/mail");
 // TODO
 // put back to 24hrs
-cron.schedule('0 0 */1 * * *', function() {
+cron.schedule('0 */1 * * * *', function() {
     console.log("new turn")
     Rogue_Check.run("*")
         //run.new_turn(h)

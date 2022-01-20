@@ -5,7 +5,7 @@
             <app-nav current="config"></app-nav>
         </div>
         <div style="margin: 1em;" fxLayout="column">
-            <button mat-raised-button color="accent" (click)='back_to_orgs()'>Back to Orgs</button>
+            <button mat-stroked-button color="accent" (click)='back_to_orgs()'>Back to Orgs</button>
         </div>
     </div>
     <!-- MAIN  -->
@@ -117,16 +117,22 @@
                 </mat-card-title>
                 <mat-card-subtitle>Select the sites you want to monitor.</mat-card-subtitle>
                 <mat-card-content>
-                    <section fxLayout="row">
-                        Sync Rogue list with the Mist Cloud every day at
-                        <mat-form-field appearance="fill">
-                            <mat-label>TIMEPICKER</mat-label>
+                    <section fxLayout="row" fxLayoutAlign="start center">
+                        <div style="margin-right: 0.5em; margin-bottom: 0.95em;">
+                            Sync Rogue list with the Mist Cloud every day at
+                        </div>
 
-                            <!-- The timepicker input -->
-                            <input matTimepicker #t="matTimepicker" #time="ngModel" [strict]="false" id="timepicker-example" mode="24h" [ngModel]="config.sites.sync_time" name="time" (timeChange)="timeChangeHandler($event)" (invalidInput)="invalidInputHandler()">
-                            <!-- An icon for the timepicker input that will open the timepicker dialog when clicked -->
-                            <mat-icon matSuffix (click)="t.showDialog()">access_time</mat-icon>
+
+                        <mat-form-field appearance="outline" style="width: 7em;">
+                            <input matInput [ngxMatTimepicker]="pickerB" [format]=24 [(ngModel)]="config.sync_time" />
+                            <mat-icon matSuffix (click)="pickerB.open()">
+                                watch_later
+                            </mat-icon>
                         </mat-form-field>
+                        <ngx-mat-timepicker color="primary" #pickerB [minutesGap]=5></ngx-mat-timepicker>
+
+
+
                     </section>
                     <section>
                         <mat-slide-toggle [(ngModel)]="config.sites.all_sites">Monitor all sites</mat-slide-toggle>
