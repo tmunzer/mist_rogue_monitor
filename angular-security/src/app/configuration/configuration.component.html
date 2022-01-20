@@ -168,9 +168,9 @@
                     <div>
 
                         Email Alerting
-                        <div *ngIf="config.sites.configured" class="material-icons green">done
+                        <div *ngIf="config.alert.configured" class="material-icons green">done
                         </div>
-                        <div *ngIf="!config.sites.configured" class="material-icons red">close
+                        <div *ngIf="!config.alert.configured" class="material-icons red">close
                         </div>
                     </div>
 
@@ -186,13 +186,13 @@
                     </section>
                     <div style="justify-content: space-between; margin-top: 1em;" fxLayout="column" fxLayoutAlign="stretch">
 
-                        <div fxLayout="row" style="width: 100%;" fxLayour="row" fxLayoutAlign="start center" [style.color]="config.alert.enabled? 'black':'gray'">
+                        <div fxLayout="row" style="width: 100%;" fxLayour="row" fxLayoutAlign="start center" [style.color]="config.alert.enabled? 'black':'#b4b4b4'">
                             <div>Send email when a AP is detected for more than </div>
                             <input placeholder="" [(ngModel)]="config.alert.min_age" [disabled]="config.alert.enabled==false" type="number" min="0" style="padding: 5px;width: 3em;margin: 5px;">
                             <div *ngIf="config.alert.min_age <= 1">day</div>
                             <div *ngIf="config.alert.min_age > 1">days</div>
                         </div>
-                        <span [style.color]="config.alert.enabled? 'black':'gray'" style="font-size: smaller;"> (0 means email is sent just after the first sync where the AP is detected) </span>
+                        <span [style.color]="config.alert.enabled? 'black':'#b4b4b4'" style="font-size: smaller;"> (0 means email is sent just after the first sync where the AP is detected) </span>
 
                         <mat-form-field>
                             <mat-label>Alert Emails Recipients</mat-label>
