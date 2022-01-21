@@ -34,7 +34,7 @@ try {
         },
         mongo: {
             host: process.env.MONGO_HOSTNAME || null,
-            base: process.env.MONGO_DB || "wsm",
+            base: process.env.MONGO_DB || "mrm",
             user: process.env.MONGO_USER || null,
             password: process.env.MONGO_PASSWORD || null,
             encKey: process.env.MONGO_ENC_KEY || null,
@@ -127,7 +127,7 @@ app.use(session({
     secret: 'T9QrskYinhvSyt6NUrEcCaQdgez3',
     store: new MongoDBStore({
         uri: 'mongodb://' + mongo_host + '/express-session?authSource=admin',
-        collection: 'wsm'
+        collection: global.config.mongo.base
     }),
     rolling: true,
     resave: true,

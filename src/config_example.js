@@ -27,7 +27,7 @@ module.exports.appServer = {
  ******************************************************************************/
 module.exports.mongo = {
     host: "localhost",
-    base: "wsm",
+    base: "mrm",
     user: "mongo_user",
     password: "mongo_password",
     encKey: "SOME_32BYTE_BASE64_STRING", //openssl rand -base64 32; 
