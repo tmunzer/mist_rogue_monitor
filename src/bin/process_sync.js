@@ -240,7 +240,7 @@ async function _processSites(account, mist, site_ids, date, rogues_collection, c
             count_sites++;
             if (count_sites == site_ids.length) {
                 _updateRoguesNotSeen(rogues_collection, date, mist.org_id);
-                _cleanRogues(date, rogues_collection);
+                _cleanRogues(date, rogues_collection, mist.org_id);
                 cb(account);
             }
         });
