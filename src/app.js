@@ -1,14 +1,14 @@
-var express = require('express');
-var morgan = require('morgan');
-var cookieParser = require('cookie-parser');
-var session = require('express-session');
-var MongoDBStore = require('connect-mongodb-session')(session);
-var path = require('path');
+const express = require('express');
+const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
+const path = require('path');
 const cron = require('node-cron');
-
-/*================================================================
- LOAD APP SETTINGS
- ================================================================*/
+const logger = require("./logger")
+    /*================================================================
+     LOAD APP SETTINGS
+     ================================================================*/
 function stringToBool(val, def_val) {
     if (val) {
         val = val.toLowerCase()
@@ -79,9 +79,16 @@ var app = express();
 // remove http header
 app.disable('x-powered-by');
 // log http request
-app.use(morgan('\x1b[32minfo\x1b[0m: :remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length]', {
-    skip: function(req, res) { return res.statusCode < 400 && req.originalUrl != "/"; }
-}));
+//using the logger and its configured transports, to save the logs created by Morgan
+const myStream = {
+    write: (text) => {
+        logger.info(text)
+    }
+}
+app.use(morgan('combined', { stream: myStream }));
+// app.use(morgan('\x1b[32minfo\x1b[0m: :remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length]', {
+//     skip: function(req, res) { return res.statusCode < 400 && req.originalUrl != "/"; }
+// }));
 
 /*================================================================
  MONGO
@@ -92,9 +99,9 @@ mongoose.Promise = require('bluebird');
 // retrieve mongodb parameters from config file
 const db = mongoose.connection;
 
-db.on('error', console.error.bind(console, '\x1b[31mERROR\x1b[0m: unable to connect to mongoDB on ' + global.config.mongo.host + ' server'));
+db.on('error', function() { logger.error('Unable to connect to mongoDB on ' + global.config.mongo.host + ' server') });
 db.once('open', function() {
-    console.info("\x1b[32minfo\x1b[0m:", "Connected to mongoDB on " + global.config.mongo.host + " server");
+    logger.info("Connected to mongoDB on " + global.config.mongo.host + " server");
 });
 
 // connect to mongodb
@@ -106,15 +113,9 @@ mongoose.connect('mongodb://' + mongo_host + '/' + global.config.mongo.base + "?
 /*================================================================
  CRON
  ================================================================*/
-const Rogue_Check = require("./bin/mist_rogue");
-const Mail = require("./bin/mail");
-// TODO
-// put back to 24hrs
+const process = require("./bin/process");
 cron.schedule('0 */1 * * * *', function() {
-    console.log("new turn")
-    Rogue_Check.run("*")
-        //run.new_turn(h)
-    Mail.run();
+    process.run()
 });
 /*================================================================
  APP
@@ -205,7 +206,7 @@ if (app.get('env') === 'development') {
             message: err.message,
             stack: err
         });
-        console.log(err);
+        logger.error(err);
     });
 } else {
     // production error handler

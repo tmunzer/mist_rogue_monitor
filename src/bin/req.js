@@ -1,5 +1,5 @@
 const https = require('https');
-
+const logger = require("./../logger")
 
 function generate_headers(mist) {
     var headers = {}
@@ -124,8 +124,8 @@ module.exports.httpRequest = function(options, callback, body) {
     result.request.options = options;
     const req = https.request(options, function(res) {
         result.result.status = res.statusCode;
-        console.info('\x1b[34mREQUEST QUERY\x1b[0m:', options.method, options.path);
-        console.info('\x1b[34mREQUEST STATUS\x1b[0m:', result.result.status);
+        logger.info('REQUEST QUERY: ' + options.method + " " + options.path);
+        logger.debug('REQUEST STATUS: ' + result.result.status);
         result.result.headers = JSON.stringify(res.headers);
         res.setEncoding('utf8');
         let data = '';
@@ -136,8 +136,8 @@ module.exports.httpRequest = function(options, callback, body) {
             switch (result.result.status) {
                 case 200:
                     if (data != '') {
-                        if (data.length > 400) console.info("\x1b[34mRESPONSE DATA\x1b[0m:", data.substr(0, 400) + '...');
-                        else console.info("\x1b[34mRESPONSE DATA\x1b[0m:", data);
+                        if (data.length > 400) logger.debug("RESPONSE DATA: " + data.substr(0, 400) + '...');
+                        else logger.debug("RESPONSE DATA: " + data);
                     }
                     var dataJSON = JSON.parse(data);
                     callback(null, dataJSON, result.result.headers);
@@ -148,7 +148,7 @@ module.exports.httpRequest = function(options, callback, body) {
                 default:
                     var dataJSON = JSON.parse(data);
                     if ("detail" in dataJSON) dataJSON = dataJSON.detail
-                    console.error("\x1b[31mRESPONSE ERROR\x1b[0m:", data);
+                    logger.error("RESPONSE ERROR: " + data);
                     callback({ code: result.result.status, error: dataJSON });
                     break;
 
@@ -156,8 +156,8 @@ module.exports.httpRequest = function(options, callback, body) {
         });
     });
     req.on('error', function(err) {
-        console.error("\x1b[31mREQUEST QUERY\x1b[0m:", options.path);
-        console.error("\x1b[31mREQUEST ERROR\x1b[0m:", JSON.stringify(err));
+        logger.error("REQUEST QUERY: " + options.path);
+        logger.error("REQUEST ERROR: " + JSON.stringify(err));
         callback(err, null);
     });
 

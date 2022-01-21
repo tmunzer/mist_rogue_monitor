@@ -7,8 +7,8 @@ var router = express.Router();
 var Account = require('../bin/models/account');
 var mist_login = require("../bin/mist_login");
 var mist_site = require("../bin/mist_site");
-
-const rbac = require("../bin/mist_check_rbac")
+const logger = require("./../logger");
+const rbac = require("../bin/mist_check_rbac");
 
 /*================================================================
  LOG IN
@@ -109,7 +109,7 @@ router.get("/sites/:org_id", (req, res) => {
             var sites = [];
             mist_site.getSites(req.session.mist, (err, data) => {
                 if (err) {
-                    console.error(err);
+                    logger.error(err);
                     res.status(500).json({ err: err });
                 } else if (data) {
                     data.forEach(site => {
@@ -161,7 +161,7 @@ router.get('/config/:org_id', (req, res) => {
                 .populate("_alert")
                 .exec((err, account) => {
                     if (err) {
-                        console.error(err);
+                        logger.error(err);
                         res.status(500).send(err);
                     } else if (!account) res.send(data)
                     else {

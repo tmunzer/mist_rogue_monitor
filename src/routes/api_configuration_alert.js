@@ -3,11 +3,11 @@ ADMIN:
 - ACS Oauth (to authenticate administrators)
 - Display Admin Web page
  ================================================================*/
-var express = require('express');
-var router = express.Router();
-var Account = require('../bin/models/account');
-var Alert = require('../bin/models/alert');
-
+const express = require('express');
+const router = express.Router();
+const Account = require('../bin/models/account');
+const Alert = require('../bin/models/alert');
+const logger = require("./../logger");
 const rbac = require("../bin/mist_check_rbac")
 
 /*================================================================
@@ -16,13 +16,13 @@ const rbac = require("../bin/mist_check_rbac")
 function createAlert(account, new_alert, cb) {
     Alert(new_alert).save((err, saved_alert) => {
         if (err) {
-            console.error(err)
+            logger.error(err)
             cb(500, err)
         } else {
             account._alert = saved_alert;
             account.save((err) => {
                 if (err) {
-                    console.error(err)
+                    logger.error(err)
                     cb(500, err)
                 } else cb(200, saved_alert)
             })
@@ -40,7 +40,7 @@ function updateAlert(account, new_alert, cb) {
         }
         data.save((err, saved_alert) => {
             if (err) {
-                console.error(err)
+                logger.error(err)
                 cb(500, err)
             } else cb(200, saved_alert)
         })
@@ -64,7 +64,7 @@ function saveNewAlert(req, res) {
         .populate("_alert")
         .exec((err, account) => {
             if (err) {
-                console.error(err)
+                logger.error(err)
                 res.status(500).send(err)
                     // if the account already exists, create or update the Site
             } else if (account) {

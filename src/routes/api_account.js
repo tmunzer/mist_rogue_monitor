@@ -9,9 +9,9 @@ const Account = require('../bin/models/account');
 const Token = require('../bin/models/token');
 const Site = require('../bin/models/site');
 const Alerting = require('../bin/models/alert');
-const Rogues_Collections = require("../bin/models/rogue")
-
-const rbac = require("../bin/mist_check_rbac")
+const Rogues_Collections = require("../bin/models/rogue");
+const logger = require("./../logger");
+const rbac = require("../bin/mist_check_rbac");
 
 function delete_account(doc_id, cb) {
     Account.findByIdAndRemove(doc_id, (err) => { cb(err) })
@@ -19,15 +19,15 @@ function delete_account(doc_id, cb) {
 
 
 function delete_token(doc_id) {
-    Token.findByIdAndRemove(doc_id, (err) => { console.error(err) })
+    Token.findByIdAndRemove(doc_id, (err) => { logger.error(err) })
 }
 
 function delete_site(doc_id) {
-    Site.findByIdAndRemove(doc_id, (err) => { console.error(err) })
+    Site.findByIdAndRemove(doc_id, (err) => { logger.error(err) })
 }
 
 function delete_alerting(org_id) {
-    Alerting.findOneAndDelete({ org_id: org_id }, (err) => { console.error(err) })
+    Alerting.findOneAndDelete({ org_id: org_id }, (err) => { logger.error(err) })
 }
 
 
@@ -44,7 +44,7 @@ function process_delete(org_id, cb) {
                 if (account._alerting) delete_alerting(org_id)
                 delete_account(account._id, (err) => {
                     if (err) {
-                        console.error(err)
+                        logger.error(err)
                         cb({ status: 500, message: err })
                     } else cb()
                 })

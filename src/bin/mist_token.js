@@ -1,5 +1,5 @@
-var api = require("./req");
-var self = require("./mist_self")
+var api = require("./req")
+const logger = require("./../logger")
     /**
      * Create Mist API Token
      * @param {Object} mist - API credentials
@@ -27,7 +27,7 @@ module.exports.generate = function(mist, scope, callback) {
     if (path) {
         api.POST(mist, path, data, (err, data) => {
             if (err) {
-                console.log(err)
+                logger.error(err)
                 callback(err)
             } else {
                 callback(null, data)
@@ -57,7 +57,7 @@ module.exports.delete = function(mist, token, callback) {
     if (path) {
         api.DELETE(mist, path, (err, data) => {
             if (err) {
-                console.log(err)
+                logger.error(err)
                 callback(err)
             } else {
                 callback(null, data)

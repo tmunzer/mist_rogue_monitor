@@ -1,5 +1,6 @@
 var api = require("./req");
 var self = require("./mist_self")
+const logger = require("./../logger")
     /**
      * Log In Mist Cloud
      * @param {Object} mist - API credentials
@@ -16,7 +17,7 @@ module.exports.login = function(mist, username, password, two_factor_code, callb
     if (two_factor_code) data["two_factor"] = two_factor_code;
     api.POST(mist, path, data, (err, data, headers) => {
         if (err) {
-            console.log(err)
+            logger.error(err)
             callback(err)
         } else {
             if (headers) {

@@ -3,12 +3,12 @@ ADMIN:
 - ACS Oauth (to authenticate administrators)
 - Display Admin Web page
  ================================================================*/
-var express = require('express');
-var router = express.Router();
-var Account = require('../bin/models/account');
-var Site = require('../bin/models/site');
-
-const rbac = require("../bin/mist_check_rbac")
+const express = require('express');
+const router = express.Router();
+const Account = require('../bin/models/account');
+const Site = require('../bin/models/site');
+const logger = require("./../logger");
+const rbac = require("../bin/mist_check_rbac");
 
 /*================================================================
  SITE FUNCTIONS
@@ -16,13 +16,13 @@ const rbac = require("../bin/mist_check_rbac")
 function createSite(account, new_site, cb) {
     Site(new_site).save((err, saved_site) => {
         if (err) {
-            console.error(err)
+            logger.error(err)
             cb(500, err)
         } else {
             account._site = saved_site;
             account.save((err) => {
                 if (err) {
-                    console.error(err)
+                    logger.error(err)
                     cb(500, err)
                 } else cb(200, saved_site)
             })
@@ -40,7 +40,7 @@ function updateSite(account, new_site, cb) {
         }
         data.save((err, saved_site) => {
             if (err) {
-                console.error(err)
+                logger.error(err)
                 cb(500, err)
             } else cb(200, saved_site)
         })
@@ -63,13 +63,13 @@ function saveNewSite(req, res) {
         .populate("_site")
         .exec((err, account) => {
             if (err) {
-                console.error(err)
+                logger.error(err)
                 res.status(500).send(err)
                     // if the account already exists, update the sync_time and create or update the Site
             } else if (account) {
                 account.sync_time_utc = sync_time_utc;
                 account.save((err, account) => {
-                    if (err) console.log(err)
+                    if (err) logger.error(err)
                         // if the account already has a Site, update it
                     else if (account._site) updateSite(account, new_site, (status, data) => res.status(status).json({ sync_time_utc: sync_time_utc, sites: data }));
                     // otherwise, create the Site entry in the DB for the account
