@@ -29,7 +29,7 @@ button:hover {
     transition: all 0.2s ease-in-out;
 }
 
-button.mat-button-disabled {
+button.nav_button.mat-button-disabled {
     background-color: #0e63ad !important;
     color: white !important;
 }
