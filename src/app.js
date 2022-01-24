@@ -115,7 +115,7 @@ mongoose.connect('mongodb://' + mongo_host + '/' + global.config.mongo.base + "?
  ================================================================*/
 const process_init = require("./bin/process_init");
 cron.schedule('0 */1 * * * *', function() {
-    procprocess_initess.run();
+    process_init.run();
 });
 /*================================================================
  APP
