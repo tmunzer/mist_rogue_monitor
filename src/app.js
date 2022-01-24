@@ -21,8 +21,9 @@ function stringToBool(val, def_val) {
 var config = {}
 try {
     config = require("./config");
+    logger.info("Config file found!")
 } catch (e) {
-
+    logger.info("No Config file. Using ENV variables!")
     config = {
         appServer: {
             vhost: process.env.NODE_HOSTNAME || null,
@@ -69,6 +70,7 @@ try {
         }
     }
 } finally {
+    logger.info("Config loaded:")
     global.config = config;
 }
 
