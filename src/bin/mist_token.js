@@ -21,7 +21,7 @@ module.exports.generate = function(mist, scope, callback) {
     } else if (scope == "user") {
         path = "/api/v1/self/apitokens"
         data = {
-            "name": "mist_psk_portal_token"
+            "name": "mist_rogue_monitor_token"
         }
     }
     if (path) {
