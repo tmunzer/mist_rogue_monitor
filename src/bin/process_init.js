@@ -16,7 +16,7 @@ module.exports.run = function() {
         .populate("_alert")
         .exec((err, accounts) => {
             if (err) {
-                _logError("Error when retriving the accounts during the new turn", err)
+                loggoer.error("Error when retriving the accounts during the new turn", err)
             } else if (accounts.length > 0) {
                 accounts.forEach(account => {
                     if (!account._token || !account._token.apitoken) {
