@@ -4,14 +4,6 @@ const Accounts = require("./models/account")
 var api = require("./req");
 const logger = require("./../logger")
 
-
-function _logError(message, err) {
-    logger.error(message);
-    logger.error(err);
-
-}
-
-
 /**
  * Function to update the rogues than have not been seen during the last check
  * @param {*} rogues_collection 
@@ -161,7 +153,8 @@ async function _syncSite(mist, site_id, date, rogues_collection, org_id, cb) {
         const path = "/api/v1/sites/" + site_id + "/insights/rogues?duration=>d&type=" + rogue_type;
         _getRogues(mist, path, (err, rogues) => {
             if (err) {
-                _logError("Unable to retrieve rogues from " + mist.host + " for site " + site_id, err);
+                logger.error("Unable to retrieve rogues from " + mist.host + " for site " + site_id);
+                logger.error(err);
                 count_rogue_types++;
                 if (count_rogue_types == rogue_types.length) {
                     cb();
@@ -178,7 +171,8 @@ async function _syncSite(mist, site_id, date, rogues_collection, org_id, cb) {
                         .findOne({ site_id: site_id, bssid: rogue_from_mist["bssid"] })
                         .exec((err, rogue_from_db) => {
                             if (err) {
-                                _logError("Unable to retrieve rogue " + rogue["bssid"] + " (site " + site_id + ") from DB", err);
+                                logger.error("Unable to retrieve rogue " + rogue["bssid"] + " (site " + site_id + ") from DB");
+                                logger.error(err);
                                 count_rogues++;
                                 if (count_rogues == rogues.length) {
                                     count_rogue_types++;
@@ -262,7 +256,8 @@ async function _refreshRogues(mist, date, account, all_sites = false, cb) {
     if (all_sites) {
         Sites.getSites(mist, (err, sites) => {
             if (err) {
-                _logError("Unable to retrieve sites from " + mist.host + " for org " + mist.org_id, err);
+                logger.error("Unable to retrieve sites from " + mist.host + " for org " + mist.org_id);
+                logger.error(err);
             } else if (sites) {
                 site_ids = [];
                 sites.forEach(site => {
@@ -290,6 +285,9 @@ module.exports.run = function(account, date, cb) {
     _refreshRogues(mist, date, account, account._site.all_sites, cb)
     account.last_rogue_process = date;
     account.save((err, account) => {
-        if (err) _logError("unable to update the last_rogue_process", err)
+        if (err) {
+            logger.error("unable to update the last_rogue_process");
+            logger.error(err);
+        }
     })
 }
