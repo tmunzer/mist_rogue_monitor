@@ -25,6 +25,7 @@ export interface RogueElement {
   site_name: string,
   ssid: string, 
   channel: number,
+  ap_mac: string,
   avg_rssi: number,
   duration: number,
   first_seen: number,
@@ -85,7 +86,7 @@ export class DashboardComponent implements OnInit {
   /////////////////////////
   // table
   showInactive: boolean= false;
-  displayedColumns: string[] = ['site_name', 'ap_mac', 'ssid', 'bssid', 'lan', 'honeypot', 'spoof', 'first_seen'];
+  displayedColumns: string[] = ['site_name', 'ssid','ap_mac',  'bssid', 'lan', 'honeypot', 'spoof', 'first_seen'];
   rogueDataSource: MatTableDataSource<RogueElement> = new MatTableDataSource();
   roguesDisplayed: RogueElement[] = [];
   pageIndex: number = 0
@@ -97,6 +98,7 @@ export class DashboardComponent implements OnInit {
   filter_site: string = "";
   filter_site_list: string[] = [];
   filter_ssid: string = "";
+  filter_ap_mac: string = "";
   filter_bssid: string = "";
 
   /////////////////////////
@@ -325,6 +327,10 @@ export class DashboardComponent implements OnInit {
     this.filter_ssid = "";
     this.apply_filter()
   }
+  clear_filter_ap_mac(){
+    this.filter_ap_mac = "";
+    this.apply_filter()
+  }
   clear_filter_bssid(){
     this.filter_bssid = "";
     this.apply_filter()
@@ -357,6 +363,7 @@ export class DashboardComponent implements OnInit {
         )
         && (this.filter_site == "" || rogue_element.site_name.toLocaleLowerCase().includes(this.filter_site.toLocaleLowerCase())) 
         && (this.filter_ssid == "" || rogue_element.ssid.toLocaleLowerCase().includes(this.filter_ssid.toLocaleLowerCase())) 
+        && (this.filter_ap_mac == "" || rogue_element.ap_mac.toLocaleLowerCase().includes(this.filter_ap_mac.toLocaleLowerCase())) 
         && (this.filter_bssid == "" || rogue_element.bssid.toLocaleLowerCase().includes(this.filter_bssid.toLocaleLowerCase())) 
       )
         this.roguesDisplayed.push(rogue)
