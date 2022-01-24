@@ -5,7 +5,11 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class NextDayPipe implements PipeTransform {
     transform(account: any) {
         var now = new Date();
-        var date = new Date(account.last_rogue_process);
+        if (account.last_rogue_process) {
+            var date = new Date(account.last_rogue_process);
+        } else {
+            var date = new Date();
+        }
         date.setUTCHours(account.sync_time_utc.hours);
         date.setUTCMinutes(account.sync_time_utc.minutes);
         if (date < now) {
