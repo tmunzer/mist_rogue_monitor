@@ -5,22 +5,22 @@ const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const path = require('path');
 const cron = require('node-cron');
-const logger = require("./logger")
-    /*================================================================
-     LOAD APP SETTINGS
-     ================================================================*/
+const logger = require("./logger");
+/*================================================================
+ LOAD APP SETTINGS
+ ================================================================*/
 function stringToBool(val, def_val) {
     if (val) {
-        val = val.toLowerCase()
-        if (val == "true" || val == "1") return true
-        else if (val == "false" || val == "0") return false
+        val = val.toLowerCase();
+        if (val == "true" || val == "1") return true;
+        else if (val == "false" || val == "0") return false;
     }
     return def_val
 }
 
 var config = {}
 try {
-    config = require("./config")
+    config = require("./config");
 } catch (e) {
 
     config = {
@@ -67,7 +67,7 @@ try {
         }
     }
 } finally {
-    global.config = config
+    global.config = config;
 }
 
 global.appPath = path.dirname(require.main.filename).replace(new RegExp('/bin$'), "");
@@ -82,7 +82,7 @@ app.disable('x-powered-by');
 //using the logger and its configured transports, to save the logs created by Morgan
 const myStream = {
     write: (text) => {
-        logger.info(text)
+        logger.info(text);
     }
 }
 app.use(morgan('combined', { stream: myStream }));
@@ -105,7 +105,7 @@ db.once('open', function() {
 });
 
 // connect to mongodb
-var mongo_host = global.config.mongo.host
+var mongo_host = global.config.mongo.host;
 if (global.config.mongo.user && global.config.mongo.password) mongo_host = global.config.mongo.user + ":" + encodeURI(global.config.mongo.password) + "@" + mongo_host
 mongoose.connect('mongodb://' + mongo_host + '/' + global.config.mongo.base + "?authSource=admin", { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -113,9 +113,9 @@ mongoose.connect('mongodb://' + mongo_host + '/' + global.config.mongo.base + "?
 /*================================================================
  CRON
  ================================================================*/
-const process = require("./bin/process");
+const process_init = require("./bin/process_init");
 cron.schedule('0 */1 * * * *', function() {
-    process.run()
+    procprocess_initess.run();
 });
 /*================================================================
  APP
