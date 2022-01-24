@@ -32,8 +32,8 @@ try {
             httpsPort: process.env.NODE_PORT_HTTPS || 3443,
             httpsCertificate: process.env.NODE_HTTPS_CERT || null,
             httpsKey: process.env.NODE_HTTPS_KEY || null,
-            disable_server_role: process.env.NODE_DISABLE_SERVER_ROLE || false,
-            disable_sync_role: process.env.NODE_DISABLE_SYNC_ROLE || false
+            disable_server_role: stringToBool(process.env.NODE_DISABLE_SERVER_ROLE, false),
+            disable_sync_role: stringToBool(process.env.NODE_DISABLE_SYNC_ROLE, false)
         },
         mongo: {
             host: process.env.MONGO_HOSTNAME || null,
@@ -70,7 +70,7 @@ try {
         }
     }
 } finally {
-    logger.info("Config loaded:")
+    logger.info("Config loaded!")
     global.config = config;
 }
 
