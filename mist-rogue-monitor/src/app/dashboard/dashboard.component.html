@@ -148,6 +148,11 @@
                         <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 10%;"> BSSID </th>
                         <td mat-cell *matCellDef="let element" [ngClass]="{'not_active': element.last_seen==0}"> {{element.bssid}} </td>
                     </ng-container>
+                    <!-- REPORTING AP Column -->
+                    <ng-container matColumnDef="ap_mac">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 10%;"> REPORTING AP </th>
+                        <td mat-cell *matCellDef="let element" [ngClass]="{'not_active': element.last_seen==0}"> {{element.ap_mac}} </td>
+                    </ng-container>
 
                     <!-- LAN Column -->
                     <ng-container matColumnDef="lan">

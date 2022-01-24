@@ -85,7 +85,7 @@ export class DashboardComponent implements OnInit {
   /////////////////////////
   // table
   showInactive: boolean= false;
-  displayedColumns: string[] = ['site_name', 'ssid', 'bssid', 'lan', 'honeypot', 'spoof', 'first_seen'];
+  displayedColumns: string[] = ['site_name', 'ap_mac', 'ssid', 'bssid', 'lan', 'honeypot', 'spoof', 'first_seen'];
   rogueDataSource: MatTableDataSource<RogueElement> = new MatTableDataSource();
   roguesDisplayed: RogueElement[] = [];
   pageIndex: number = 0
