@@ -52,6 +52,7 @@ function checkRogue(rogue_types, rogue, datasets, data, date) {
     data.rogues.push({
             site_id: rogue.site_id,
             bssid: rogue.bssid,
+            ap_mac: ap_mac.ssid[rogue.ssid.length - 1].value,
             ssid: rogue.ssid[rogue.ssid.length - 1].value,
             channel: rogue.channel[rogue.channel.length - 1].value,
             avg_rssi: rogue.avg_rssi[rogue.avg_rssi.length - 1].value,

@@ -61,7 +61,7 @@ try {
             logo_url: process.env.SMTP_LOGO || "https://cdn.mist.com/wp-content/uploads/logo.png"
         },
         history: {
-            max_age: process.env.MAX_AGE || 365
+            max_age: process.env.MAX_AGE || 30
         },
         login: {
             disclaimer: process.env.APP_DISCLAIMER || "",
