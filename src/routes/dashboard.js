@@ -2,8 +2,8 @@
 LOGIN:
 Generate the generic or unique login page based on the URL params
 ================================================================*/
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
 /*================================================================
 ROUTES

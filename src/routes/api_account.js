@@ -4,7 +4,7 @@ ADMIN:
 - Display Admin Web page
  ================================================================*/
 const express = require('express');
-var router = express.Router();
+const router = express.Router();
 const Account = require('../bin/models/account');
 const Token = require('../bin/models/token');
 const Site = require('../bin/models/site');

@@ -2,11 +2,11 @@
 ADMIN:
 - Display Admin Web page
  ================================================================*/
-var express = require('express');
-var router = express.Router();
-var Account = require('../bin/models/account');
-var mist_login = require("../bin/mist_login");
-var mist_site = require("../bin/mist_site");
+const express = require('express');
+const router = express.Router();
+const Account = require('../bin/models/account');
+const mist_login = require("../bin/mist_login");
+const mist_site = require("../bin/mist_site");
 const logger = require("./../logger");
 const rbac = require("../bin/mist_check_rbac");
 

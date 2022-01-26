@@ -171,26 +171,29 @@ if (!config.appServer.disable_server_role) {
     //===============ROUTES=================
     // // User Interface
     //Admin
-    var admin_config_token = require('./routes/api_configuration_token');
+    const admin_config_token = require('./routes/api_configuration_token');
     app.use('/api/config/token', admin_config_token);
     //Config Sites
-    var admin_config_sites = require('./routes/api_configuration_sites');
+    const admin_config_sites = require('./routes/api_configuration_sites');
     app.use('/api/config/sites', admin_config_sites);
     //Config Alerts
-    var admin_config_alerts = require('./routes/api_configuration_alert');
+    const admin_config_alerts = require('./routes/api_configuration_alert');
     app.use('/api/config/alerts', admin_config_alerts);
     //Config Sites
-    var admin_dashboard = require('./routes/api_dashboard');
+    const admin_dashboard = require('./routes/api_dashboard');
     app.use('/api/dashboard', admin_dashboard);
     //Account
-    var account_api = require('./routes/api_account');
+    const account_api = require('./routes/api_account');
     app.use('/api/account', account_api);
     //Rogue details
-    var rogue_api = require('./routes/api_rogue');
+    const rogue_api = require('./routes/api_rogue');
     app.use('/api/rogues', rogue_api);
     //Admin
-    var admin_api = require('./routes/api');
+    const admin_api = require('./routes/api');
     app.use('/api', admin_api);
+    //Dashboard
+    const dashboard = require('./routes/dashboard');
+    app.use('/', dashboard);
 
     //Otherwise
     app.get("*", function(req, res) {

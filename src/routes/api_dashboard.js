@@ -3,11 +3,11 @@ ADMIN:
 - ACS Oauth (to authenticate administrators)
 - Display Admin Web page
  ================================================================*/
-var express = require('express');
-var router = express.Router();
-var Account = require('../bin/models/account');
-var Sites = require("../bin/mist_site");
-var Rogues_Collections = require('../bin/models/rogue');
+const express = require('express');
+const router = express.Router();
+const Account = require('../bin/models/account');
+const Sites = require("../bin/mist_site");
+const Rogues_Collections = require('../bin/models/rogue');
 const rbac = require("../bin/mist_check_rbac");
 /*================================================================
     LOG IN
