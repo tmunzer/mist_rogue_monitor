@@ -11,6 +11,7 @@ import { ConfigurationComponent } from './configuration/configuration.component'
 import { ApitokenManualDialog } from './configuration/configuration.token.manual';
 import { ConfirmDialog } from './configuration/configuration.confirm';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { RogueComponent, MouseWheelDirective } from './dashboard/rogue/rogue.component';
 import { NavComponent } from './nav/nav.component';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -18,7 +19,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ChartsModule } from 'ng2-charts';
-
+import {DragDropModule} from '@angular/cdk/drag-drop';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -43,6 +44,7 @@ import {NgxMatTimepickerModule} from 'ngx-mat-timepicker';
 
 
 import { NextDayPipe } from './common/pipe/next_day'
+import { TsArrayPipe } from './common/pipe/ts_array_pipe'
 
 @NgModule({
   declarations: [
@@ -51,15 +53,19 @@ import { NextDayPipe } from './common/pipe/next_day'
     LoginComponent, TwoFactorDialog,
     ConfigurationComponent, ConfirmDialog,
     DashboardComponent,
+    RogueComponent,
     ApitokenManualDialog,
     OrgSelectComponent,
     NavComponent,
-    NextDayPipe
+    NextDayPipe,
+    TsArrayPipe,
+    MouseWheelDirective
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    DragDropModule,
     FlexLayoutModule,
     FormsModule,
     ChartsModule,

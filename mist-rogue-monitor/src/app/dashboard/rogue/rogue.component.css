@@ -1,0 +1,80 @@
+.rogue-location {
+    width: 40px;
+    height: 40px;
+    position: relative;
+    z-index: 20;
+    background-color: #ff000052;
+    border-radius: 20px;
+    border: 2px solid red;
+}
+
+.rogue-info {
+    z-index: 19;
+    position: absolute;
+    margin-top: 1em;
+    margin-left: 1em;
+    padding: 1em;
+    background-color: white;
+    box-shadow: rgb(0 0 0 / 10%) 0px 4px 12px;
+    width: calc(80vw - 2em);
+    border-radius: 3px;
+    border: 1px solid lightgrey;
+    cursor: default;
+}
+
+.rogue-info-label {
+    font-weight: 100;
+}
+
+.rogue-info-value {
+    font-weight: 600;
+}
+
+div.rogue-no-plan {
+    height: 80vh;
+    width: 80vw;
+    overflow: hidden;
+    cursor: default;
+    color: gray;
+}
+
+div.rogue-position {
+    height: 80vh;
+    width: 80vw;
+    overflow: hidden;
+    cursor: grab;
+}
+
+.rogue-position:active {
+    cursor: grabbing;
+}
+
+.zoom {
+    border: 1px solid lightgray;
+    box-shadow: rgb(0 0 0 / 16%) 0px 1px 4px;
+    width: 2em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.zoom:hover:not(.disabled) {
+    background-color: lightgray;
+    transition: all 0.2s ease-in-out;
+}
+
+.zoom.top {
+    border-radius: 2px 2px 0 0;
+}
+
+.zoom.bottom {
+    border-radius: 0 0 2px 2px;
+}
+
+.zoom.disabled {
+    background-color: lightgray;
+    cursor: default;
+}

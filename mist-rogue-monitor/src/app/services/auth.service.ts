@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
+import { connect } from 'http2';
 import { Subject } from 'rxjs';
 
 
 @Injectable({
     providedIn: 'root'
-  })
+})
 export class AuthConfigService {
 
     // Observable string sources
@@ -20,5 +21,5 @@ export class AuthConfigService {
         this.AuthConfigSource.next(auth_config);
     }
 
-    
+
 }

@@ -8,11 +8,10 @@ var router = express.Router();
 var Account = require('../bin/models/account');
 var Sites = require("../bin/mist_site");
 var Rogues_Collections = require('../bin/models/rogue');
-
-const rbac = require("../bin/mist_check_rbac")
-    /*================================================================
-     LOG IN
-     ================================================================*/
+const rbac = require("../bin/mist_check_rbac");
+/*================================================================
+    LOG IN
+================================================================*/
 
 router.get("/account/:org_id", (req, res) => {
     rbac.check_org_access(req, res, (err, req) => {

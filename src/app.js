@@ -185,12 +185,12 @@ if (!config.appServer.disable_server_role) {
     //Account
     var account_api = require('./routes/api_account');
     app.use('/api/account', account_api);
+    //Rogue details
+    var rogue_api = require('./routes/api_rogue');
+    app.use('/api/rogues', rogue_api);
     //Admin
     var admin_api = require('./routes/api');
     app.use('/api', admin_api);
-    //Admin Login
-    var admin_html = require('./routes/dashboard');
-    app.use('/', admin_html);
 
     //Otherwise
     app.get("*", function(req, res) {

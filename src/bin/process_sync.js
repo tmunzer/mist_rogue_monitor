@@ -31,6 +31,19 @@ function _updateRoguesNotSeen(rogues_collection, date) {
         })
 }
 
+
+/**********************************************************************
+ *      UPDATE ROGES
+ */
+function _updateRogueFied(rogue_from_db, rogue_field, date, value) {
+    if (rogue_from_db[rogue_field]) {
+        rogue_from_db[rogue_field].push({ ts: date, value: value })
+        while (rogue_from_db.ssid.length > global.config.history.max_age) { rogue_from_db.ssid.shift() }
+    } else {
+        rogue_from_db[rogue_field] = [{ ts: date, value: value }];
+    }
+}
+
 /**
  * Function to update the entry in the DB
  * @param {*} rogue_type 
@@ -47,28 +60,16 @@ function _updateRogue(rogue_type, rogue_from_db, rogue_from_mist, date, cb) {
         }
         rogue_from_db.last_seen = date;
         rogue_from_db.rogue_type[rogue_type] = true;
-
-        rogue_from_db.ssid.push({ ts: date, value: rogue_from_mist.ssid })
-        while (rogue_from_db.ssid.length > global.config.history.max_age) { rogue_from_db.ssid.shift() }
-
-        rogue_from_db.ap_mac.push({ ts: date, value: rogue_from_mist.ap_mac })
-        while (rogue_from_db.ap_mac.length > global.config.history.max_age) { rogue_from_db.ap_mac.shift() }
-
-        rogue_from_db.channel.push({ ts: date, value: rogue_from_mist.channel })
-        while (rogue_from_db.channel.length > global.config.history.max_age) { rogue_from_db.channel.shift() }
-
-        rogue_from_db.avg_rssi.push({ ts: date, value: rogue_from_mist.avg_rssi })
-        while (rogue_from_db.avg_rssi.length > global.config.history.max_age) { rogue_from_db.avg_rssi.shift() }
-
-        rogue_from_db.num_aps.push({ ts: date, value: rogue_from_mist.num_aps })
-        while (rogue_from_db.num_aps.length > global.config.history.max_age) { rogue_from_db.num_aps.shift() }
-
-        rogue_from_db.delta_x.push({ ts: date, value: rogue_from_mist.delta_x })
-        while (rogue_from_db.delta_x.length > global.config.history.max_age) { rogue_from_db.delta_x.shift() }
-
-        rogue_from_db.delta_y.push({ ts: date, value: rogue_from_mist.delta_y })
-        while (rogue_from_db.delta_y.length > global.config.history.max_age) { rogue_from_db.delta_y.shift() }
-
+        console.log(rogue_from_db.ssid)
+        _updateRogueFied(rogue_from_db, "ssid", date, rogue_from_mist.ssid);
+        _updateRogueFied(rogue_from_db, "ap_mac", date, rogue_from_mist.ap_mac);
+        _updateRogueFied(rogue_from_db, "channel", date, rogue_from_mist.ssichanneld);
+        _updateRogueFied(rogue_from_db, "times_heard", date, rogue_from_mist.times_heard);
+        _updateRogueFied(rogue_from_db, "avg_rssi", date, rogue_from_mist.avg_rssi);
+        _updateRogueFied(rogue_from_db, "num_aps", date, rogue_from_mist.num_aps);
+        _updateRogueFied(rogue_from_db, "delta_x", date, rogue_from_mist.delta_x);
+        _updateRogueFied(rogue_from_db, "delta_y", date, rogue_from_mist.delta_y);
+        console.log(rogue_from_db.ssid)
     } else {
         rogue_from_db.rogue_type[rogue_type] = true;
     }
@@ -101,6 +102,7 @@ function _createRogue(site_id, rogue_type, rogue_from_mist, date, rogues_collect
         ssid: [{ ts: date, value: rogue_from_mist["ssid"] }],
         ap_mac: [{ ts: date, value: rogue_from_mist["ap_mac"] }],
         channel: [{ ts: date, value: rogue_from_mist["channel"] }],
+        times_heard: [{ ts: date, value: rogue_from_mist["times_heard"] }],
         avg_rssi: [{ ts: date, value: rogue_from_mist["avg_rssi"] }],
         num_aps: [{ ts: date, value: rogue_from_mist["num_aps"] }],
         delta_x: [{ ts: date, value: rogue_from_mist["delta_x"] }],

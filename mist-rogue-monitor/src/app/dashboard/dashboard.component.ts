@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ErrorDialog } from './../common/error';
+import { RogueComponent } from './rogue/rogue.component';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -23,7 +24,7 @@ export interface RogueElement {
   site_id: string,
   bssid: string,
   site_name: string,
-  ssid: string, 
+  ssid: string,
   channel: number,
   ap_mac: string,
   avg_rssi: number,
@@ -85,8 +86,8 @@ export class DashboardComponent implements OnInit {
 
   /////////////////////////
   // table
-  showInactive: boolean= false;
-  displayedColumns: string[] = ['site_name', 'ssid','ap_mac',  'bssid', 'lan', 'honeypot', 'spoof', 'first_seen'];
+  showInactive: boolean = false;
+  displayedColumns: string[] = ['site_name', 'ssid', 'ap_mac', 'bssid', 'lan', 'honeypot', 'spoof', 'first_seen'];
   rogueDataSource: MatTableDataSource<RogueElement> = new MatTableDataSource();
   roguesDisplayed: RogueElement[] = [];
   pageIndex: number = 0
@@ -115,7 +116,7 @@ export class DashboardComponent implements OnInit {
     others: false
   }
 
-  
+
   stats = {
     lan: { now: 0, last_week: 0 },
     honeypot: { now: 0, last_week: 0 },
@@ -158,7 +159,7 @@ export class DashboardComponent implements OnInit {
       }
     ]
   }
-  
+
   account = {
     last_rogue_process: 0,
     errors: 0,
@@ -319,19 +320,19 @@ export class DashboardComponent implements OnInit {
   //////////////////////////////////////////////////////////////////////////////
   /////           TABLE
   //////////////////////////////////////////////////////////////////////////////
-  clear_filter_site(){
+  clear_filter_site() {
     this.filter_site = "";
     this.apply_filter()
   }
-  clear_filter_ssid(){
+  clear_filter_ssid() {
     this.filter_ssid = "";
     this.apply_filter()
   }
-  clear_filter_ap_mac(){
+  clear_filter_ap_mac() {
     this.filter_ap_mac = "";
     this.apply_filter()
   }
-  clear_filter_bssid(){
+  clear_filter_bssid() {
     this.filter_bssid = "";
     this.apply_filter()
   }
@@ -354,17 +355,17 @@ export class DashboardComponent implements OnInit {
     this.stats.rogues.forEach(rogue => {
       const rogue_element = (rogue as RogueElement);
       if (
-         (this.showInactive || rogue_element.first_seen > 0)
+        (this.showInactive || rogue_element.first_seen > 0)
         && (
           (this.display.lan && rogue_element.rogue_type.lan)
           || (this.display.honeypot && rogue_element.rogue_type.honeypot)
           || (this.display.spoof && rogue_element.rogue_type.spoof)
           || (this.display.others && rogue_element.rogue_type.others)
         )
-        && (this.filter_site == "" || rogue_element.site_name.toLocaleLowerCase().includes(this.filter_site.toLocaleLowerCase())) 
-        && (this.filter_ssid == "" || rogue_element.ssid.toLocaleLowerCase().includes(this.filter_ssid.toLocaleLowerCase())) 
-        && (this.filter_ap_mac == "" || rogue_element.ap_mac.toLocaleLowerCase().includes(this.filter_ap_mac.toLocaleLowerCase())) 
-        && (this.filter_bssid == "" || rogue_element.bssid.toLocaleLowerCase().includes(this.filter_bssid.toLocaleLowerCase())) 
+        && (this.filter_site == "" || rogue_element.site_name.toLocaleLowerCase().includes(this.filter_site.toLocaleLowerCase()))
+        && (this.filter_ssid == "" || rogue_element.ssid.toLocaleLowerCase().includes(this.filter_ssid.toLocaleLowerCase()))
+        && (this.filter_ap_mac == "" || rogue_element.ap_mac.toLocaleLowerCase().includes(this.filter_ap_mac.toLocaleLowerCase()))
+        && (this.filter_bssid == "" || rogue_element.bssid.toLocaleLowerCase().includes(this.filter_bssid.toLocaleLowerCase()))
       )
         this.roguesDisplayed.push(rogue)
     })
@@ -423,6 +424,11 @@ export class DashboardComponent implements OnInit {
   //////////////////////////////////////////////////////////////////////////////
   /////           DIALOG BOXES
   //////////////////////////////////////////////////////////////////////////////
+  open_rogue(rogue: RogueElement): void {
+    const dialogRef = this._dialog.open(RogueComponent, {
+      data: { bssid: rogue.bssid, org_id: this.org_id, site_name: rogue.site_name}
+    });
+  }
   // ERROR
   open_error(title: string, text: string): void {
     const dialogRef = this._dialog.open(ErrorDialog, {
@@ -438,6 +444,9 @@ export class DashboardComponent implements OnInit {
       verticalPosition: "top",
     });
   }
+
+
+
 
   //////////////////////////////////////////////////////////////////////////////
   /////           BCK TO ORGS

@@ -63,7 +63,7 @@
     <!-- MAIN  -->
     <div fxLayout="column" fxLayoutAlign="stretch" style="margin-top: 0em; width: 100%; height: 100%;">
         <div fxLayout="row" fxLayoutAlign="space-between">
-            <div fxLayout="column" style="width: 50%;">
+            <div fxLayout="column" style="width: 60%;">
                 <div fxLayout="row" fxLayoutAlign="space-between center" style="padding: 0 16px;">
                     <ng-template *ngTemplateOutlet="tplCount; context: {$implicit:{title:'lan', rogue_type: 'lan', stats: stats.lan, display: display.lan, color: colors.lan}}">
                     </ng-template>
@@ -82,7 +82,7 @@
                 </mat-card>
             </div>
             <!-- SCatter Chart -->
-            <mat-card class="dashboard-content chart" style="height: 23em; position: relative; display: block; width: 50%;">
+            <mat-card class="dashboard-content chart" style="height: 23em; position: relative; display: block; width: 40%;">
                 <canvas baseChart [datasets]="barChartData" [labels]="barChartLabels" [options]="barChartOptions" [legend]="barChartLegend" [chartType]="barChartType">
                 </canvas>
             </mat-card>
@@ -163,7 +163,7 @@
                     <!-- BSSID Column -->
                     <ng-container matColumnDef="bssid">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 10%;"> BSSID </th>
-                        <td mat-cell *matCellDef="let element" [ngClass]="{'not_active': element.last_seen==0}">
+                        <td mat-cell *matCellDef="let element" [ngClass]="{'not_active': element.last_seen==0}" (click)="open_rogue(element)" style="color: #0e63ad; cursor: pointer;">
                             {{element.bssid}} </td>
                     </ng-container>
                     <!-- REPORTING AP Column -->

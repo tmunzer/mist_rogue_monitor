@@ -14,6 +14,7 @@ function dynamicSchema(org_id) {
         ap_mac: [{ ts: Number, value: String }],
         channel: [{ ts: Number, value: Number }],
         avg_rssi: [{ ts: Number, value: Number }],
+        times_heard: [{ ts: Number, value: Number }],
         num_aps: [{ ts: Number, value: Number }],
         delta_x: [{ ts: Number, value: Number }],
         delta_y: [{ ts: Number, value: Number }],

@@ -1,0 +1,79 @@
+<mat-card-content fxLayout="row" style="overflow: hidden;margin: -24px; width: 80vw; height: 80vh;" #rogueDialog>
+
+    <div *ngIf="!is_working" style="max-height: 80vh;overflow: none;">
+
+        <div fxLayout="column" class="rogue-info">
+            <div fxLayout="row" fxLayoutAlign="space-around">
+                <div>
+                    <div class="rogue-info-label">SITE:</div>
+                    <div class="rogue-info-value">{{data.site_name}}</div>
+                </div>
+                <div>
+                    <div class="rogue-info-label">MAP:</div>
+                    <div class="rogue-info-value">{{map_info.name}}</div>
+                </div>
+                <div>
+                    <div class="rogue-info-label">SSID:</div>
+                    <div class="rogue-info-value">{{rogue.ssid | tsarray}}</div>
+                </div>
+                <div>
+                    <div class="rogue-info-label">BSSID:</div>
+                    <div class="rogue-info-value">{{rogue.bssid}}</div>
+                </div>
+                <div>
+                    <div class="rogue-info-label">TYPE:</div>
+                    <div class="rogue-info-value">
+                        <div *ngIf="rogue.rogue_type.lan" style="color: red">LAN</div>
+                        <div *ngIf="rogue.rogue_type.honeypot" style="color: red">HONEYPOT</div>
+                        <div *ngIf="rogue.rogue_type.spoof" style="color: red">SPOOF</div>
+                        <div *ngIf="rogue.rogue_type.others && !rogue.rogue_type.lan && !rogue.rogue_type.honeypot && !rogue.rogue_type.spoof " style="color: green">NEIGHBOR</div>
+                    </div>
+                </div>
+            </div>
+            <div style="height: 150px; width: 100%" fxLayout="row" fxLayoutAlign="space-between">
+                <div style="height: 100%; width: 48%;">
+                    <canvas baseChart [datasets]="rssiChartData" [labels]="rssiChartLabels" [options]="rssiChartOptions" [legend]="lineChartLegend" chartType="line">
+                    </canvas>
+                </div>
+                <div style="height: 100%; width: 48%;">
+                    <canvas baseChart [datasets]="thChartData" [labels]="thChartLabels" [options]="thChartOptions" [legend]="lineChartLegend" chartType="line">
+                    </canvas>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="!image" fxLayout="column" fxLayoutAlign="center center" class="rogue-no-plan">
+            <div>This map has no floorplan configured...</div>
+        </div>
+        <div *ngIf="image" class="rogue-position" mouseWheel (mouseWheelUp)="scale_in()" (mouseWheelDown)="scale_out()">
+            <div cdkDrag [cdkDragFreeDragPosition]="drag">
+                <div [ngStyle]="{'transform': 'scale('+ scale +')'}">
+
+                    <div class="rogue-location" [ngStyle]="{'left.px': rogue_position.x, 'top.px': rogue_position.y}">
+                    </div>
+                    <img [src]="image" alt="Place image title" style="z-index: 18;">
+                </div>
+            </div>
+        </div>
+        <div style="position: relative; bottom: 7em; left: 1em; z-index: 21;" fxLayout="row" fxLayoutAlign="space-between flex-end">
+            <div fxLayout="column">
+                <div class="zoom top" (click)="centerImage()" [ngClass]="{'disabled': !image}">
+                    <mat-icon>filter_center_focus</mat-icon>
+                </div>
+                <div class="zoom" (click)="scale_in()" [ngClass]="{'disabled': !image}">
+                    <mat-icon>add</mat-icon>
+                </div>
+                <div class="zoom bottom" (click)="scale_out()" [ngClass]="{'disabled': !image}">
+                    <mat-icon>remove</mat-icon>
+                </div>
+            </div>
+            <div style="margin-right: 2em;">
+                <button mat-raised-button color="accent" (click)="close()">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="is_working" style="width: 100%;" fxLayout="column" fxLayoutAlign="center center">
+        <mat-spinner></mat-spinner>
+    </div>
+</mat-card-content>
