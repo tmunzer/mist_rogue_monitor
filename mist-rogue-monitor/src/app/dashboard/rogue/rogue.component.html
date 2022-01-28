@@ -45,12 +45,12 @@
             <div>This map has no floorplan configured...</div>
         </div>
         <div *ngIf="image" class="rogue-position" mouseWheel (mouseWheelUp)="scale_in()" (mouseWheelDown)="scale_out()">
-            <div cdkDrag [cdkDragFreeDragPosition]="drag">
+            <div cdkDrag [cdkDragFreeDragPosition]="drag" style="display: flex; align-items: center; justify-content: center;height: 100%; width: 100%;">
                 <div [ngStyle]="{'transform': 'scale('+ scale +')'}">
 
                     <div class="rogue-location" [ngStyle]="{'left.px': rogue_position.x, 'top.px': rogue_position.y}">
                     </div>
-                    <img [src]="image" alt="Place image title" style="z-index: 18;">
+                    <img [src]="image" alt="Place image title" style="z-index: 18; border: 1px solid">
                 </div>
             </div>
         </div>

@@ -22,6 +22,14 @@ function _updateRoguesNotSeen(rogues_collection, date) {
                     rogue_from_db.first_seen = 0;
                     rogue_from_db.email_sent = 0;
                     rogue_from_db.updated_at = date;
+                    _updateRogueFied(rogue_from_db, "ssid", date, null);
+                    _updateRogueFied(rogue_from_db, "ap_mac", date, null);
+                    _updateRogueFied(rogue_from_db, "channel", date, 0);
+                    _updateRogueFied(rogue_from_db, "times_heard", date, 0);
+                    _updateRogueFied(rogue_from_db, "avg_rssi", date, null);
+                    _updateRogueFied(rogue_from_db, "num_aps", date, 0);
+                    _updateRogueFied(rogue_from_db, "delta_x", date, null);
+                    _updateRogueFied(rogue_from_db, "delta_y", date, null);
 
                     rogue_from_db.save((err) => {
                         if (err) logger.error(err);
@@ -60,7 +68,6 @@ function _updateRogue(rogue_type, rogue_from_db, rogue_from_mist, date, cb) {
         }
         rogue_from_db.last_seen = date;
         rogue_from_db.rogue_type[rogue_type] = true;
-        console.log(rogue_from_db.ssid)
         _updateRogueFied(rogue_from_db, "ssid", date, rogue_from_mist.ssid);
         _updateRogueFied(rogue_from_db, "ap_mac", date, rogue_from_mist.ap_mac);
         _updateRogueFied(rogue_from_db, "channel", date, rogue_from_mist.ssichanneld);
@@ -69,7 +76,6 @@ function _updateRogue(rogue_type, rogue_from_db, rogue_from_mist, date, cb) {
         _updateRogueFied(rogue_from_db, "num_aps", date, rogue_from_mist.num_aps);
         _updateRogueFied(rogue_from_db, "delta_x", date, rogue_from_mist.delta_x);
         _updateRogueFied(rogue_from_db, "delta_y", date, rogue_from_mist.delta_y);
-        console.log(rogue_from_db.ssid)
     } else {
         rogue_from_db.rogue_type[rogue_type] = true;
     }

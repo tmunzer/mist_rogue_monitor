@@ -202,8 +202,7 @@ export class RogueComponent implements OnInit {
         this.ap_position = data.ap_position;
         this.map_info = data.map_info;
         this.getImage();
-        this.processRogue();
-        this.centerImage();
+        this.processRoguePosition();
         this.is_working = false;
       },
       error: error => {
@@ -253,7 +252,7 @@ export class RogueComponent implements OnInit {
   //////////////////////////////////////////////////////////////////////////////
   /////           Process Rogue
   //////////////////////////////////////////////////////////////////////////////
-  processRogue(): void {
+  processRoguePosition(): void {
     this.rogue_position.x = (this.rogue.delta_x[this.rogue.delta_x.length - 1].value + this.ap_position.x);
     this.rogue_position.y = (this.rogue.delta_y[this.rogue.delta_y.length - 1].value + this.ap_position.y);
   }
@@ -279,6 +278,7 @@ export class RogueComponent implements OnInit {
     let reader = new FileReader();
     reader.addEventListener("load", () => {
       this.image = reader.result;
+      this.centerImage();
     }, false);
 
     if (image) {
@@ -290,8 +290,8 @@ export class RogueComponent implements OnInit {
   centerImage(): void {
     if (this.image) {
       this.drag = {
-        x: parseInt((((this.rogueDialog.nativeElement.offsetWidth / 2) - (this.rogue_position.x))).toFixed()),
-        y: parseInt((((this.rogueDialog.nativeElement.offsetHeight / 2) - (this.rogue_position.y))).toFixed())
+        x: parseInt((((this.map_info.width/2)-this.rogue_position.x ) *this.scale ).toFixed()),
+        y: parseInt((((this.map_info.height/2)- this.rogue_position.y) *this.scale).toFixed())
       }
     }
   }
@@ -299,7 +299,7 @@ export class RogueComponent implements OnInit {
   scale_in(): void {
     if (this.image) {
       this.scale = this.scale + 0.2;
-      this.processRogue();
+      this.processRoguePosition();
     }
   }
 
@@ -308,7 +308,7 @@ export class RogueComponent implements OnInit {
     if (this.image) {
       if (this.scale > 0.2) {
         this.scale = parseFloat((this.scale - 0.2).toFixed(1));
-        this.processRogue();
+        this.processRoguePosition();
       }
     }
   }
