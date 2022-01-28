@@ -62,13 +62,13 @@ router.post("/:org_id/image", (req, res) => {
     request.get(full_path).pipe(res);
 })
 
-router.get("/:org_id/rogue/:bssid", (req, res) => {
+router.get("/:org_id/site/:site_id/rogue/:bssid", (req, res) => {
     rbac.check_org_access(req, res, (err, req) => {
         if (err) err.send()
         else {
             const rogues_collection = Rogues_Collections(req.session.mist.org_id);
             rogues_collection
-                .find({ bssid: req.params.bssid })
+                .find({ bssid: req.params.bssid, site_id: req.params.site_id })
                 .exec((err, rogues) => {
                     if (err) {
                         logger.error("Error when trying to find bssid " + req.params.bssid + " for org_id " + req.session.mist.org_id);

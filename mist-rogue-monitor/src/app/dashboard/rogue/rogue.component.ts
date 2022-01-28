@@ -194,7 +194,7 @@ export class RogueComponent implements OnInit {
 
   getRogueDetails(): void {
     this.is_working = true;
-    this._http.get<any>("/api/rogues/" + this.data.org_id + "/rogue/" + this.data.bssid).subscribe({
+    this._http.get<any>("/api/rogues/" + this.data.org_id + "/site/" + this.data.site_id + "/rogue/" + this.data.bssid).subscribe({
       next: data => {
         console.log(data);
         this.rogue = data.rogue;

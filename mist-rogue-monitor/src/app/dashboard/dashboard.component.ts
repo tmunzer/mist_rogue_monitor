@@ -426,7 +426,7 @@ export class DashboardComponent implements OnInit {
   //////////////////////////////////////////////////////////////////////////////
   open_rogue(rogue: RogueElement): void {
     const dialogRef = this._dialog.open(RogueComponent, {
-      data: { bssid: rogue.bssid, org_id: this.org_id, site_name: rogue.site_name}
+      data: { bssid: rogue.bssid, org_id: this.org_id, site_name: rogue.site_name, site_id: rogue.site_id}
     });
   }
   // ERROR
