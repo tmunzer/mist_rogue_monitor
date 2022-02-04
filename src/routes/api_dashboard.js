@@ -70,7 +70,7 @@ function checkRogue(rogue_types, rogue, datasets, data, date) {
                     // How many days in the past was the ts
                     var delta = date - rssi.ts;
                     var delta_days = parseInt(delta / (3600 * 24 * 1000));
-                    if (!delta_done.includes(delta_days)) {
+                    if (rssi.value && !delta_done.includes(delta_days)) {
                         // add +1 to (last entry - delta_days)                
                         datasets[rogue_type][30 - delta_days] = datasets[rogue_type][30 - delta_days] + 1;
                         delta_done.push(delta_days)
