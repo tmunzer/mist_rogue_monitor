@@ -40,7 +40,6 @@ module.exports.GET = function(mist, path, callback) {
         method: "GET",
         headers: headers
     };
-    console.log(path)
     this.httpRequest(options, callback);
 };
 /**

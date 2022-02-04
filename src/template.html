@@ -25,45 +25,18 @@
             </tr>
             <tr>
                 <td>
-                    <table class="content" style="width: 100%; margin: 1em;">
+                    <table class="content" style="width: 100%; padding: 1em;">
                         <tr>
-                            <th colspan="6" style="padding-left: 2em; text-align: left;">
+                            <th colspan="3" style="padding-left: 2em; text-align: left;">
                                 Hello!
                             </th>
                         </tr>
                         <tr>
-                            <td colspan="6" style="padding-top: 2em; padding-left: 2em; text-align: left;">
+                            <td colspan="3" style="padding-top: 2em; padding-left: 2em; text-align: left;">
                                 Rogue Alert for the Org <b>{org_name}</b> (org_id: {org_id})
                             </td>
                         </tr>
-                        <tr>
-                            <td colspan="6" style="padding-left: 2em; text-align: left;">
-                                The following Rogue APs have been detected for more than {duration}:
-                            </td>
-                        </tr>
-                        <tr>
-                            <th style="padding-top: 1em; text-align: start; width: 6em;">
-                                Site
-                            </th>
-                            <th style="padding-top: 1em; text-align: start; width: 6em;">
-                                SSID
-                            </th>
-                            <th style="padding-top: 1em; text-align: start; width: 6em;">
-                                BSSID
-                            </th>
-                            <th style="padding-top: 1em; text-align: start; width: 6em;">
-                                LAN
-                            </th>
-                            <th style="padding-top: 1em; text-align: start; width: 6em;">
-                                HONEYPOT
-                            </th>
-                            <th style="padding-top: 1em; text-align: start; width: 6em;">
-                                SPOOF
-                            </th>
-                        </tr>
-                        <tr>
-                            {rogues}
-                        </tr>
+                        {rogue_tables}
                     </table>
                 </td>
             </tr>

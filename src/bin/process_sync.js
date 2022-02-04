@@ -161,7 +161,7 @@ async function _syncSite(mist, site_id, date, rogues_collection, org_id, cb) {
         const path = "/api/v1/sites/" + site_id + "/insights/rogues?duration=>d&type=" + rogue_type;
         _getRogues(mist, path, (err, rogues) => {
             if (err) {
-                logger.error("Unable to retrieve rogues from " + mist.host + " for site " + site_id);
+                logger.error("account " + org_id + " - Unable to retrieve rogues from " + mist.host + " for site " + site_id);
                 logger.error(err);
                 count_rogue_types++;
                 if (count_rogue_types == rogue_types.length) {
@@ -179,7 +179,7 @@ async function _syncSite(mist, site_id, date, rogues_collection, org_id, cb) {
                         .findOne({ site_id: site_id, bssid: rogue_from_mist["bssid"] })
                         .exec((err, rogue_from_db) => {
                             if (err) {
-                                logger.error("Unable to retrieve rogue " + rogue["bssid"] + " (site " + site_id + ") from DB");
+                                logger.error("account " + org_id + " - Unable to retrieve rogue " + rogue["bssid"] + " (site " + site_id + ") from DB");
                                 logger.error(err);
                                 count_rogues++;
                                 if (count_rogues == rogues.length) {
@@ -264,7 +264,7 @@ async function _refreshRogues(mist, date, account, all_sites = false, cb) {
     if (all_sites) {
         Sites.getSites(mist, (err, sites) => {
             if (err) {
-                logger.error("Unable to retrieve sites from " + mist.host + " for org " + mist.org_id);
+                logger.error("account " + account.org_id + " - Unable to retrieve sites from " + mist.host);
                 logger.error(err);
             } else if (sites) {
                 site_ids = [];
@@ -294,7 +294,7 @@ module.exports.run = function(account, date, cb) {
     account.last_rogue_process = date;
     account.save((err, account) => {
         if (err) {
-            logger.error("unable to update the last_rogue_process");
+            logger.error("account " + account.org_id + " - Unable to update the last_rogue_process");
             logger.error(err);
         }
     })
