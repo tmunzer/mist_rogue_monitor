@@ -5,7 +5,6 @@ const mist_site = require("./mist_site")
 const logger = require("./../logger")
 
 function _generateTable(sites, host, org_id, rogues, rogue_type, duration_text) {
-    console.log(rogue_type)
     const rogue_name = {
         "lan": "Rogue",
         "honeypot": "Honeypot",
@@ -13,26 +12,26 @@ function _generateTable(sites, host, org_id, rogues, rogue_type, duration_text) 
         "others": "Neighbor"
     }
     var table = `<tr>
-                    <td colspan="3" style="text-align: left;">
+                    <td colspan="3" style="text-align: left; height: 3em; vertical-align: bottom;">
                         <b>{ap_string}</b> have been detected for more than {duration}:
                     </td>
                 </tr>
                 <tr style="border: 1px solid black">
-                    <th style="padding-top: 1em; text-align: start; width: 6em;">
+                    <th style="padding-top: 1em; text-align: start; width: 6em; border-bottom: 1px solid;">
                         Site
                     </th>
-                    <th style="padding-top: 1em; text-align: start; width: 6em;">
+                    <th style="padding-top: 1em; text-align: start; width: 6em; border-bottom: 1px solid;">
                         SSID
                     </th>
-                    <th style="padding-top: 1em; text-align: start; width: 6em;">
+                    <th style="padding-top: 1em; text-align: start; width: 6em; border-bottom: 1px solid;">
                         BSSID
                     </th>
                 </tr>`
     const temp = `
     <tr style="border: 1px solid black">
-        <td style="padding-right: 1em;"><a href="{url}" taget="_blank">{site}</a></td>
-        <td style="padding-right: 1em;">{ssid}</td>
-        <td style="padding-right: 1em;">{bssid}</td>
+        <td style="padding-right: 1em; border-bottom: 1px solid;"><a href="{url}" taget="_blank">{site}</a></td>
+        <td style="padding-right: 1em; border-bottom: 1px solid;">{ssid}</td>
+        <td style="padding-right: 1em; border-bottom: 1px solid;">{bssid}</td>
     </tr>`;
     var count = 0;
     rogues.forEach(rogue => {
@@ -42,7 +41,7 @@ function _generateTable(sites, host, org_id, rogues, rogue_type, duration_text) 
             var url = "https://" + host.replace("api", "manage") + "/admin/?org_id=" + org_id + "#!security/" + rogue["site_id"]
             var ssids = [];
             rogue.ssid.forEach(ssid => {
-                if (!ssids.includes(ssid) && ssid.length > 0) {
+                if (ssid.value && ssids.indexOf(ssid.value) < 0) {
                     ssids.push(ssid.value)
                 }
             })
@@ -56,9 +55,9 @@ function _generateTable(sites, host, org_id, rogues, rogue_type, duration_text) 
     if (count == 0) {
         return "";
     } else if (count == 1) {
-        var ap_string = count + " " + rogue_name[rogue_type] + "AP";
+        var ap_string = count + " " + rogue_name[rogue_type] + " AP";
     } else {
-        var ap_string = count + " " + rogue_name[rogue_type] + "APs";
+        var ap_string = count + " " + rogue_name[rogue_type] + " APs";
     }
 
     table = table
