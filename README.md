@@ -24,9 +24,9 @@ The backend will to a daily sync to retrieve the list of Rogue/Neighbor APs dete
 - Historical data for each AP 
 
 
-<img src="https://github.com/tmunzer/mist_rogue_monitor/raw/main/._readme/img/conf.png"  width="50%"  />
-<img src="https://github.com/tmunzer/mist_rogue_monitor/raw/main/._readme/img/dash.png"  width="50%"  />
-<img src="https://github.com/tmunzer/mist_rogue_monitor/raw/main/._readme/img/details.png"  width="50%"  />
+<img src="https://github.com/tmunzer/mist_rogue_monitor/raw/main/._readme/img/conf.jpg"  width="50%"  />
+<img src="https://github.com/tmunzer/mist_rogue_monitor/raw/main/._readme/img/dash.jpg"  width="50%"  />
+<img src="https://github.com/tmunzer/mist_rogue_monitor/raw/main/._readme/img/details.jpg"  width="50%"  />
 
 
 ## How it's working
