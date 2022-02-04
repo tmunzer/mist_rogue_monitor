@@ -35,7 +35,10 @@ function _generateTable(sites, host, org_id, rogues, rogue_type, duration_text) 
     </tr>`;
     var count = 0;
     rogues.forEach(rogue => {
-        if (rogue.rogue_type[rogue_type]) {
+        if (
+            (rogue_type != "others" && rogue.rogue_type[rogue_type]) ||
+            (rogue_type == "others" && !rogue.rogue_type.lan && !rogue.rogue_type.honeypot && !rogue.rogue_type.spoof)
+        ) {
             count += 1;
             var site = sites[rogue["site_id"]]
             var url = "https://" + host.replace("api", "manage") + "/admin/?org_id=" + org_id + "#!security/" + rogue["site_id"]
