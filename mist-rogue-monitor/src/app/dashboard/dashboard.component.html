@@ -1,6 +1,11 @@
 <!-- Template -->
 <ng-template #tplCount let-count>
     <mat-card fxLayout="column" class="rogue-card" (click)="toggle_visibility(count.rogue_type)" [ngClass]="{'visible': count.display == true, 'not-visible' : count.display == false }" [style.border-color]="count.color">
+        <div class="loading" fxLayout="row" *ngIf="is_working">
+            <div fxLayout="column">
+                <mat-spinner diameter=50></mat-spinner>
+            </div>
+        </div>
         <mat-card-content fxLayout="column">
             <div fxLayout="row" fxLayoutAlign="space-between">
                 <div fxLayout="column">
@@ -77,12 +82,22 @@
                 <!-- Line Chart -->
 
                 <mat-card class="dashboard-content chart" style="height: 12em; position: relative; display: block; margin-top: .54em">
+                    <div class="loading" fxLayout="row" *ngIf="is_working">
+                        <div fxLayout="column">
+                            <mat-spinner diameter=50></mat-spinner>
+                        </div>
+                    </div>
                     <canvas baseChart style="height: 100%;" [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions" [legend]="lineChartLegend" chartType="line">
                     </canvas>
                 </mat-card>
             </div>
             <!-- SCatter Chart -->
             <mat-card class="dashboard-content chart" style="height: 23em; position: relative; display: block; width: 40%;">
+                <div class="loading" fxLayout="row" *ngIf="is_working">
+                    <div fxLayout="column">
+                        <mat-spinner diameter=50></mat-spinner>
+                    </div>
+                </div>
                 <canvas baseChart [datasets]="barChartData" [labels]="barChartLabels" [options]="barChartOptions" [legend]="barChartLegend" [chartType]="barChartType">
                 </canvas>
             </mat-card>
