@@ -295,7 +295,7 @@ export class DashboardComponent implements OnInit {
             lower_site = displayed_site
           }
         })
-        displayed_sites.slice(displayed_sites.indexOf(lower_site), 1)
+        displayed_sites = displayed_sites.slice(displayed_sites.indexOf(lower_site), 1)
         displayed_sites.push(sites[site_id])
       }
     }

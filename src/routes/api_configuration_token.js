@@ -59,6 +59,7 @@ function updateToken(account, new_token, cb) {
 function saveNewToken(req, res, err, data) {
     // if not able to generate the token
     if (err) {
+        // deepcode ignore ServerLeak: returning error code from Mist
         res.status(err.code).send(err.error)
             // if the token has been generated
     } else {
@@ -77,7 +78,7 @@ function saveNewToken(req, res, err, data) {
             .exec((err, account) => {
                 if (err) {
                     logger.error(err)
-                    res.status(500).send(err)
+                    res.status(500).send()
                         // if the account already exists, create or update the token
                 } else if (account) {
                     // if the account already has a token, update it
@@ -117,7 +118,7 @@ router.get('/:org_id', (req, res) => {
                 .exec((err, account) => {
                     if (err) {
                         logger.error(err)
-                        res.status(500).send(err)
+                        res.status(500).send()
                     } else if (account && account._token) {
                         data.token.configured = true
                         data.token.created_by = account._token.created_by
@@ -125,9 +126,8 @@ router.get('/:org_id', (req, res) => {
                         if (account._token.apitoken_id == "manual_token") {
                             data.token.auto_mode = false
                         }
-                        if (account._token.scope == "user" && account._token.created_by == req.session.self.email) {
-                            data.token.can_delete = true
-                        } else if (account._token.scope == "org" && req.session.mist.privilege == "admin") {
+                        if ((account._token.scope == "user" && account._token.created_by == req.session.self.email) ||
+                            (account._token.scope == "org" && req.session.mist.privilege == "admin")) {
                             data.token.can_delete = true
                         }
                         res.json(data)
@@ -170,6 +170,7 @@ router.delete("/:org_id", (req, res) => {
                         mist_token.delete(req.session.mist, db_token, (err, data) => {
                             if (err) {
                                 logger.error(err)
+                                    // deepcode ignore ServerLeak: returning error code from Mist
                                 res.status(err.code).send(err.error)
                             } else {
                                 Token.findByIdAndRemove(db_token._id, (err) => {

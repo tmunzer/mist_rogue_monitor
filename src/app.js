@@ -6,6 +6,8 @@ const MongoDBStore = require('connect-mongodb-session')(session);
 const path = require('path');
 const cron = require('node-cron');
 const logger = require("./logger");
+const default_mist_hosts = { "Global 01 - manage.mist.com": "api.mist.com", "Global 02 - manage.gc1.mist.com": "api.gc1.mist.com", "Global 03 - manage.ac2.mist.com": "api.ac2.mist.com", "Global 04 - manage.gc2.mist.com": "api.gc2.mist.com", "Europe 01 - manage.eu.mist.com": "api.eu.mist.com" }
+
 /*================================================================
  LOAD APP SETTINGS
  ================================================================*/
@@ -67,9 +69,17 @@ try {
             disclaimer: process.env.APP_DISCLAIMER || "",
             github_url: process.env.APP_GITHUB_URL || "",
             docker_url: process.env.APP_DOCKER_URL || ""
-        }
+        },
+        mist_hosts: process.env.MIST_HOSTS || null
     }
 } finally {
+    if (typeof(config.mist_hosts) == 'string') {
+        try {
+            config.mist_hosts = JSON.parse(config.mist_hosts)
+        } catch {
+            config.mist_hosts = default_mist_hosts;
+        }
+    } else if (!config.mist_hosts || typeof(config.mist_hosts != "object")) config.mist_hosts = default_mist_hosts;
     logger.info("Config loaded!")
     global.config = config;
 }

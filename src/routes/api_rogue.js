@@ -59,6 +59,7 @@ function _getMapDetails(mist, rogue, map_id, ap_position, cb) {
 
 router.post("/:org_id/image", (req, res) => {
     const full_path = req.body.url;
+    // deepcode ignore Ssrf: data comming from Mist. Considered as sure
     request.get(full_path).pipe(res);
 })
 

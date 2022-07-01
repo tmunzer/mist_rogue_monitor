@@ -30,7 +30,7 @@ button:hover {
 }
 
 button.nav_button.mat-button-disabled {
-    background-color: #0e63ad !important;
+    background-color: gray !important;
     color: white !important;
 }
 

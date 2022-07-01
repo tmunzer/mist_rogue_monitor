@@ -9,22 +9,22 @@ const router = express.Router();
 ROUTES
 ================================================================*/
 // when the user load the unique login page
-router.get("/", (req, res) => {
+router.get("/", (_req, res) => {
     res.sendFile(global.appPath + '/views/index.html');
 });
-router.get("/login", (req, res) => {
+router.get("/login", (_req, res) => {
     res.sendFile(global.appPath + '/views/index.html');
 });
-router.get("/orgs", (req, res) => {
+router.get("/orgs", (_req, res) => {
     res.sendFile(global.appPath + '/views/index.html');
 });
-router.get("/orgs/:org_id", (req, res) => {
+router.get("/orgs/:org_id", (_req, res) => {
     res.sendFile(global.appPath + '/views/index.html');
 });
-router.get("/orgs/:org_id/dashboard", (req, res) => {
+router.get("/orgs/:org_id/dashboard", (_req, res) => {
     res.sendFile(global.appPath + '/views/index.html');
 });
-router.get("/orgs/:org_id/config", (req, res) => {
+router.get("/orgs/:org_id/config", (_req, res) => {
     res.sendFile(global.appPath + '/views/index.html');
 });
 

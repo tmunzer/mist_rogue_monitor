@@ -2,15 +2,15 @@
     <mat-card class="card-outer" fxLayout="column" style="max-width: 90%;">
         <mat-form-field apparence="outline" style="width: 30em; max-width: 100%">
             <mat-label>Organization</mat-label>
-            <mat-select [(ngModel)]="org">
+            <mat-select [(value)]="org">
                 <mat-option *ngFor="let org of orgs" [value]=org>
                     {{org.name}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
 
-        <button mat-raised-button color="primary" (click)="submitOrg()">
-                Select
+        <button mat-raised-button color="primary" (click)="submitOrg()" [disabled]="!org.org_id">
+            Select
             </button>
     </mat-card>
 </div>

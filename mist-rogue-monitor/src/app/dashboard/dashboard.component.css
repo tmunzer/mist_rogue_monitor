@@ -55,8 +55,8 @@
 .table-parent-container {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 480px);
     padding: 0;
+    height: calc(100vh - 435px);
 }
 
 .table-container {

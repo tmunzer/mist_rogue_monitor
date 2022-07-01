@@ -241,7 +241,7 @@ async function _processSites(account, mist, site_ids, date, rogues_collection, c
         _syncSite(mist, site_id, date, rogues_collection, mist.org_id, function() {
             count_sites++;
             if (count_sites == site_ids.length) {
-                _updateRoguesNotSeen(rogues_collection, date, mist.org_id);
+                _updateRoguesNotSeen(rogues_collection, date);
                 _cleanRogues(date, rogues_collection, mist.org_id);
                 cb(account);
             }

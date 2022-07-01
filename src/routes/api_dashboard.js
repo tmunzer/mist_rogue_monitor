@@ -24,9 +24,9 @@ router.get("/account/:org_id", (req, res) => {
                 .exec((err, account) => {
                     var configured = false;
                     if (err) res.status(500).json(err)
-                    else if (!account) res.status(404).send()
-                    else if (!account._site || !account._site.configured) res.status(404).send()
-                    else if (!account._token) res.status(404).send()
+                    else if ((!account) ||
+                        (!account._site || !account._site.configured) ||
+                        (!account._token)) res.status(404).send()
                     else {
                         configured = true;
                         data = {

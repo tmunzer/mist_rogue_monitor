@@ -182,9 +182,8 @@ router.get('/config/:org_id', (req, res) => {
                             if (account._token.apitoken_id == "manual_token") {
                                 data.config.token.auto_mode = false;
                             }
-                            if (account._token.scope == "user" && account._token.created_by == req.session.self.email) {
-                                data.config.token.can_delete = true;
-                            } else if (account._token.scope == "org" && req.session.mist.privilege == "admin") {
+                            if ((account._token.scope == "user" && account._token.created_by == req.session.self.email) ||
+                                (account._token.scope == "org" && req.session.mist.privilege == "admin")) {
                                 data.config.token.can_delete = true;
                             }
                         }
@@ -211,6 +210,20 @@ router.get('/disclaimer', (req, res) => {
     if (global.config.login.disclaimer) data["disclaimer"] = global.config.login.disclaimer;
     if (global.config.login.github_url) data["github_url"] = global.config.login.github_url;
     if (global.config.login.docker_url) data["docker_url"] = global.config.login.docker_url;
+    res.json(data);
+})
+
+
+router.get('/hosts', (req, res) => {
+    let data = []
+    for (var key in global.config.mist_hosts) {
+        data.push({ "value": global.config.mist_hosts[key], "viewValue": key })
+    }
+    data = data.sort((a, b) => {
+        if (a.viewValue.toLowerCase() < b.viewValue.toLowerCase()) return -1;
+        else if (a.viewValue.toLowerCase() > b.viewValue.toLowerCase()) return 1;
+        else return 0
+    })
     res.json(data);
 })
 

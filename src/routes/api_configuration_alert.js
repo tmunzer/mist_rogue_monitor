@@ -65,7 +65,7 @@ function saveNewAlert(req, res) {
         .exec((err, account) => {
             if (err) {
                 logger.error(err)
-                res.status(500).send(err)
+                res.status(500).send()
                     // if the account already exists, create or update the Site
             } else if (account) {
                 // if the account already has a Site, update it

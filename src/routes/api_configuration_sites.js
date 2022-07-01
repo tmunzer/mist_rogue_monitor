@@ -64,7 +64,7 @@ function saveNewSite(req, res) {
         .exec((err, account) => {
             if (err) {
                 logger.error(err)
-                res.status(500).send(err)
+                res.status(500).send()
                     // if the account already exists, update the sync_time and create or update the Site
             } else if (account) {
                 account.sync_time_utc = sync_time_utc;

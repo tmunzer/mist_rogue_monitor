@@ -44,7 +44,7 @@
 
 <!-- Display -->
 
-<div fxLayout="row" style="height: 100%;">
+<div fxLayout="row" style="height: calc(100vh - 64px);">
     <!-- NAV  -->
     <div fxLayout="row" fxLayoutAlign="flex-end center" class="nav">
         <div fxLayout="row" fxLayoutAlign="start">
@@ -92,7 +92,7 @@
                 </mat-card>
             </div>
             <!-- SCatter Chart -->
-            <mat-card class="dashboard-content chart" style="height: 23em; position: relative; display: block; width: 40%;">
+            <mat-card class="dashboard-content chart" style="position: relative; display: block; width: 40%;">
                 <div class="loading" fxLayout="row" *ngIf="is_working">
                     <div fxLayout="column">
                         <mat-spinner diameter=50></mat-spinner>
