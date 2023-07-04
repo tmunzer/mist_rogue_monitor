@@ -1,4 +1,4 @@
-FROM node:14-alpine
+FROM node:16.20.1-alpine
 LABEL fr.mist-lab.mws.version="0.0.1"
 LABEL fr.mist-lab.mws.release-date="2021-11-09"
 
