@@ -25,11 +25,11 @@
         "ngx-mat-timepicker": "^12.2.0",
         "rxjs": "~6.6.0",
         "tslib": "^2.5.2",
-        "zone.js": "~0.12.0"
+        "zone.js": "~0.13.1"
     },
     "devDependencies": {
         "@angular-devkit/build-angular": "^14.2.11",
-        "@angular/cli": "~12.0.3",
+        "@angular/cli": "~12.2.18",
         "@angular/compiler-cli": "~12.0.3",
         "@types/jasmine": "~3.6.0",
         "@types/node": "^12.11.1",
