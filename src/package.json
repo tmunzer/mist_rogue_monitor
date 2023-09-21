@@ -16,7 +16,7 @@
         "express": "^4.17.3",
         "express-session": "^1.17.3",
         "googleapis": "^72.0.0",
-        "jsonwebtoken": "^9.0.1",
+        "jsonwebtoken": "^9.0.2",
         "mdb-ui-kit": "^3.11.0",
         "mongoose": "^5.13.20",
         "mongoose-encryption": "^2.1.0",
