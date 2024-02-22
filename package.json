@@ -5,7 +5,7 @@
     "cookie-parser": "^1.4.6",
     "cron": "^1.8.2",
     "express": "^4.18.2",
-    "express-session": "^1.17.3",
+    "express-session": "^1.18.0",
     "mongoose": "^6.12.1",
     "mongoose-encryption": "^2.1.2",
     "morgan": "^1.10.0",
