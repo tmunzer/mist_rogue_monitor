@@ -14,7 +14,7 @@
         "cron": "^1.8.2",
         "debug": "^4.3.4",
         "express": "^4.17.3",
-        "express-session": "^1.17.3",
+        "express-session": "^1.18.0",
         "googleapis": "^72.0.0",
         "jsonwebtoken": "^9.0.2",
         "mdb-ui-kit": "^3.11.0",
