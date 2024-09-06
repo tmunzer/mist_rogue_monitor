@@ -9,7 +9,7 @@
         "bluebird": "^3.7.2",
         "body-parser": "^1.20.2",
         "btoa": "^1.2.1",
-        "connect-mongodb-session": "^3.1.1",
+        "connect-mongodb-session": "^4.0.0",
         "cookie-parser": "^1.4.5",
         "cron": "^1.8.2",
         "debug": "^4.3.4",
