@@ -6,7 +6,7 @@
     "cron": "^1.8.2",
     "express": "^4.21.0",
     "express-session": "^1.18.0",
-    "mongoose": "^8.0.0",
+    "mongoose": "^8.5.4",
     "mongoose-encryption": "^2.1.2",
     "morgan": "^1.10.0",
     "node-mailer": "^0.1.1",
