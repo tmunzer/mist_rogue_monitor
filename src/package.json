@@ -15,7 +15,7 @@
         "debug": "^4.3.4",
         "express": "^4.21.0",
         "express-session": "^1.17.3",
-        "googleapis": "^72.0.0",
+        "googleapis": "^124.0.0",
         "jsonwebtoken": "^9.0.2",
         "mdb-ui-kit": "^3.11.0",
         "mongoose": "^5.13.22",
